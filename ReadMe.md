@@ -8,9 +8,9 @@ tf_cnnvis is a CNN visualization library based on the paper [Visualizing and Und
 * Scipy
 * h5py
 
-## Global access by appending to PYTHONPATH
-Add below line at the end of the ~/.bashrc file for global access
-> export PYTHONPATH=$PYTHONPATH:\<path-to-the-repo\>
+## Setup script
+Simply run 
+> python setup.py
 
 ## API
 ### get_visualization(graph_or_path, value_feed_dict, input_tensor=None, layers='r', path_logdir='./Log', path_outdir='./Output', force=False, n=8) 
