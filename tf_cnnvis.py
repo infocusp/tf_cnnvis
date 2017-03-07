@@ -334,9 +334,11 @@ def _visualization_by_layer_name(
 
             if not is_value_feed_dict:
                 value_feed_dict[0] = value_feed_dict[0][:MAX_IMAGES] # only taking first MAX_IMAGES from given images array
+                original_images = value_feed_dict[0]
                 feed_dict = dict(zip(x, value_feed_dict)) # prepare feed_dict for the reconstruction
             else:
                 feed_dict[X] = feed_dict[X][:MAX_IMAGES] # only taking first MAX_IMAGES from given images array
+                original_images = feed_dict[X]
 
             # creating gradient ops
             reconstruct = [tf.gradients(op_tensor, X, grad_ys=tf.multiply(all_ones, mask[i]))[0] for i in range(n)]
@@ -379,7 +381,7 @@ def _visualization_by_layer_name(
 
     # write results into log file of TFBOARD
     if path_logdir != None:
-        is_success = _write_into_log(path_logdir, out, grid_images, activations, grid_activations, layer_name)
+        is_success = _write_into_log(path_logdir, original_images, out, grid_images, activations, grid_activations, layer_name)
 
     print("Reconstruction Completed for %s layer." % (layer_name))
 
@@ -410,7 +412,7 @@ def _write_into_disk(path_outdir, images, grid_images, grid_activations, layer):
     return is_success
 
 
-def _write_into_log(path_logdir, images, grid_images, activations, grid_activations, layer):
+def _write_into_log(path_logdir, original_images, images, grid_images, activations, grid_activations, layer):
     is_success = True
 
     path_log = os.path.join(path_logdir, layer.lower().replace("/", "_"))
@@ -426,12 +428,16 @@ def _write_into_log(path_logdir, images, grid_images, activations, grid_activati
         # image_summary_t3 = tf.summary.image(name = "One_By_One_Activations", tensor = image2, max_outputs = MAX_FEATUREMAP)
         image_summary_t4 = tf.summary.image(name = "All_At_Once_Activations", tensor = image2, max_outputs = MAX_IMAGES)
 
+        image_summary_t5 = tf.summary.image(name = "Input_Images", tensor = image1, max_outputs = MAX_IMAGES)
+
         with tf.Session() as sess:
             summary1 = sess.run(image_summary_t1, feed_dict = {image1 : np.concatenate(images, axis = 0)})
             summary2 = sess.run(image_summary_t2, feed_dict = {image1 : np.concatenate(grid_images, axis = 0)})
 
             # summary3 = sess.run(image_summary_t3, feed_dict = {image2 : np.concatenate(activations, axis = 0)})
             summary4 = sess.run(image_summary_t4, feed_dict = {image2 : np.concatenate(grid_activations, axis = 0)})
+
+            summary5 = sess.run(image_summary_t5, feed_dict = {image1 : original_images})
         try:
             file_writer = tf.summary.FileWriter(path_log, g) # create file writer
             # compute and write the summary
@@ -441,6 +447,8 @@ def _write_into_log(path_logdir, images, grid_images, activations, grid_activati
 
             # file_writer.add_summary(summary3)
             file_writer.add_summary(summary4)
+
+            file_writer.add_summary(summary5)
         except:
             is_success = False
             print("Error occured int writting results into log file.")
