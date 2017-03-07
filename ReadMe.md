@@ -2,6 +2,24 @@
 
 tf_cnnvis is a CNN visualization library based on the paper [Visualizing and Understanding Convolutional Networks](https://www.cs.nyu.edu/~fergus/papers/zeilerECCV2014.pdf) by Matthew D. Zeiler and Rob Fergus. We use the [TensorFlow](https://www.tensorflow.org/) library to reconstruct the input images from different layers of the convolutional neural network. The generated images are displayed in [TensorBoard](https://www.tensorflow.org/get_started/summaries_and_tensorboard)
 
+
+
+![images.jpg](https://bitbucket.org/repo/Lyk4Mq/images/4115906191-images.jpg)  ![reconstructed_1.png](https://bitbucket.org/repo/Lyk4Mq/images/780477117-reconstructed_1.png)  ![reconstructed_2.png](https://bitbucket.org/repo/Lyk4Mq/images/1721308804-reconstructed_2.png)  ![reconstructed_3.png](https://bitbucket.org/repo/Lyk4Mq/images/856735034-reconstructed_3.png)  
+
+
+![Lena.png](https://bitbucket.org/repo/Lyk4Mq/images/1446219986-Lena.png)  ![lena_reconstructed_1.png](https://bitbucket.org/repo/Lyk4Mq/images/3167061216-lena_reconstructed_1.png)  ![lena_reconstructed_2.png](https://bitbucket.org/repo/Lyk4Mq/images/3614692134-lena_reconstructed_2.png)  ![lena_reconstructed_3.png](https://bitbucket.org/repo/Lyk4Mq/images/124519901-lena_reconstructed_3.png)
+
+![mancoffee.png](https://bitbucket.org/repo/Lyk4Mq/images/995747735-mancoffee.png)  ![man_reconstructed_1.png](https://bitbucket.org/repo/Lyk4Mq/images/755140547-man_reconstructed_1.png)  ![man_reconstructed_2.png](https://bitbucket.org/repo/Lyk4Mq/images/3249576627-man_reconstructed_2.png)  ![man_reconstructed_3.png](https://bitbucket.org/repo/Lyk4Mq/images/744562091-man_reconstructed_3.png)
+
+Figure 1: Original image and the reconstructed versions from maxpool layer 1,2 and 3 of Alexnet generated using tf_cnnvis. 
+
+![tensorboard.png](https://bitbucket.org/repo/Lyk4Mq/images/2741459243-tensorboard.png)
+
+[View Full size](https://bitbucket.org/repo/Lyk4Mq/images/2005224096-tensorboard.png)
+
+
+
+
 ## Requirements:
 * Tensorflow (>= 1.0)
 * Numpy
@@ -27,7 +45,8 @@ python setup.py
 
 
 ## API
-### get_visualization(graph_or_path, value_feed_dict, input_tensor=None, layers='r', path_logdir='./Log', path_outdir='./Output', force=False, n=8) 
+**tf_cnnvis.get_visualization(graph_or_path, value_feed_dict, input_tensor=None, layers='r', path_logdir='./Log', path_outdir='./Output', force=False, n=8)** 
+
 The function to generate the visualizations of the input image reconstructed from the feature maps of a given layer.
 #### Parameters
 * graph_or_path (tf.Graph object or String) – TF graph or [Path-to-saved-graph] as String containing the CNN.
@@ -42,7 +61,7 @@ The function to generate the visualizations of the input image reconstructed fro
 * path_outdir (String (Default = "./Output")) – [path-to-dir] to save results into disk as images
 * path_logdir (String (Default = "./Log")) – [path-to-log-dir] to make log file for TensorBoard visualization
 * force (boolean (Default = False)) – True to took of limit for number of featuremaps in a layer
-* n (int (Default = 8)) – Number of gradient ops will be added to the graph to avoid redundent forward pass
+* n (int (Default = 8)) – Number of gradient ops computed in parallel. Increasing this number increases amount of parallelization (and hence reduces computation time) at the cost of higher RAM usage. 
 
 #### Returns
 * is_success (boolean) – True if the function ran successfully. False otherwise
@@ -60,21 +79,22 @@ and under tensorboard homepage look under the *Images* tab
 
 ## Additional helper functions
 ### image_normalization(image, ubound=255.0, epsilon=1e-07)
-Min-Max image normalization. Convert pixle values in range [0, ubound]
+Performs Min-Max image normalization. Transforms the pixel values to range [0, ubound]
 #### Parameters
 * image (3-D numpy array) – A numpy array to normalize
 * ubound (float (Default = 255.0)) – upperbound for a image pixel value
 * epsilon (float (Default = 1e-7)) – for computational stability
 
-#### Return
-* (3-D numpy array) – A normalized image
+#### Returns
+* norm_image (3-D numpy array) – The normalized image
 
-### convert_into_grid(Xs, ubound=255.0, padding=1)
-Convert 4-D numpy array into a grid image
+### convert_into_grid(Xs, padding=1, ubound=255.0)
+Convert 4-D numpy array into a grid of images
 #### Parameters
-* Xs (4-D numpy array (first axis contations an image)) – A numpy array of images to make grid out of it
+* Xs (4-D numpy array (first axis contations an image)) – The 4D array of images to put onto grid
+* padding (int (Default = 1)) – Spacing between grid cells
 * ubound (float (Default = 255.0)) – upperbound for a image pixel value
-* padding (int (Default = 1)) – padding size between grid cells
 
-#### Return
+
+#### Returns
 * (3-D numpy array) – A grid of input images
