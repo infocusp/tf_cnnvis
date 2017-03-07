@@ -60,21 +60,22 @@ and under tensorboard homepage look under the *Images* tab
 
 ## Additional helper functions
 ### image_normalization(image, ubound=255.0, epsilon=1e-07)
-Min-Max image normalization. Convert pixle values in range [0, ubound]
+Performs Min-Max image normalization. Transforms the pixel values to range [0, ubound]
 #### Parameters
 * image (3-D numpy array) – A numpy array to normalize
 * ubound (float (Default = 255.0)) – upperbound for a image pixel value
 * epsilon (float (Default = 1e-7)) – for computational stability
 
-#### Return
-* (3-D numpy array) – A normalized image
+#### Returns
+* norm_image (3-D numpy array) – The normalized image
 
-### convert_into_grid(Xs, ubound=255.0, padding=1)
-Convert 4-D numpy array into a grid image
+### convert_into_grid(Xs, padding=1, ubound=255.0)
+Convert 4-D numpy array into a grid of images
 #### Parameters
-* Xs (4-D numpy array (first axis contations an image)) – A numpy array of images to make grid out of it
+* Xs (4-D numpy array (first axis contations an image)) – The 4D array of images to put onto grid
+* padding (int (Default = 1)) – Spacing between grid cells
 * ubound (float (Default = 255.0)) – upperbound for a image pixel value
-* padding (int (Default = 1)) – padding size between grid cells
 
-#### Return
+
+#### Returns
 * (3-D numpy array) – A grid of input images
