@@ -9,8 +9,22 @@ tf_cnnvis is a CNN visualization library based on the paper [Visualizing and Und
 * h5py
 
 ## Setup script
-Simply run 
-> python setup.py
+Clone the repository
+
+```
+#!bash
+
+git clone https://bitbucket.org/infocusp/tf_cnnvis.git
+```
+
+And run 
+
+```
+#!bash
+
+python setup.py
+```
+
 
 ## API
 ### get_visualization(graph_or_path, value_feed_dict, input_tensor=None, layers='r', path_logdir='./Log', path_outdir='./Output', force=False, n=8) 
@@ -34,11 +48,17 @@ The function to generate the visualizations of the input image reconstructed fro
 * is_success (boolean) – True if the function ran successfully. False otherwise
 
 ## To visualize in TensorBoard
-Run command in console
-> tensorboard --logdir=\<path-to-logdir\>
+To start Tensorflow, run the following command in console
+
+```
+#!bash
+
+tensorboard --logdir=./Log
+```
+
 and under tensorboard homepage look under the *Images* tab
 
-## Helper functions
+## Additional helper functions
 ### image_normalization(image, ubound=255.0, epsilon=1e-07)
 Min-Max image normalization. Convert pixle values in range [0, ubound]
 #### Parameters
