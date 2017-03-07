@@ -42,7 +42,7 @@ The function to generate the visualizations of the input image reconstructed fro
 * path_outdir (String (Default = "./Output")) – [path-to-dir] to save results into disk as images
 * path_logdir (String (Default = "./Log")) – [path-to-log-dir] to make log file for TensorBoard visualization
 * force (boolean (Default = False)) – True to took of limit for number of featuremaps in a layer
-* n (int (Default = 8)) – Number of gradient ops will be added to the graph to avoid redundent forward pass
+* n (int (Default = 8)) – Number of gradient ops computed in parallel. Increasing this number increases amount of parallelization (and hence reduces computation time) at the cost of higher RAM usage. 
 
 #### Returns
 * is_success (boolean) – True if the function ran successfully. False otherwise
