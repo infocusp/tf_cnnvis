@@ -1,7 +1,8 @@
 import os
 import sys
 import pkgutil
-from setuptools import setup
+from distutils.core import setup
+from distutils.command.clean import clean
 
 def read(fname):
 	return open(os.path.join(os.path.dirname(__file__), fname)).read()
@@ -14,6 +15,11 @@ for pkg_name in pkgs:
 	if pkgutil.find_loader(pkg_name) is None:
 		print("%s is not installed." % pkg_name)
 		is_pkg_missing = True
+
+class CleanCommand(clean):
+	"""Custom clean command to tidy up the project root."""
+	def run(self):
+		os.system('rm -vrf ./build ./dist ./*.pyc ./*.tgz ./*.egg-info')
 
 if not is_pkg_missing:
 	import tensorflow
@@ -39,6 +45,16 @@ if not is_pkg_missing:
 				"Programming Language :: Python",
 				"Topic :: Scientific/Engineering :: Visualization",
 			],
+			install_requires=[
+				'numpy',
+				'scipy',
+				'tensorflow',
+				'h5py',
+				'wget'
+			],
+			cmdclass={
+				'clean': CleanCommand,
+			}
 		)
 	else:
 		print("Please upgrade TensorFlow to 1.0.0")

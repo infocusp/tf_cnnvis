@@ -40,7 +40,8 @@ And run
 ```
 #!bash
 
-python setup.py
+sudo python setup.py install
+sudo python setup.py clean
 ```
 
 
