@@ -1,7 +1,10 @@
 import os
 import sys
 import pkgutil
-import platform
+from setuptools import setup
+
+def read(fname):
+	return open(os.path.join(os.path.dirname(__file__), fname)).read()
 
 pkgs = ["tensorflow", "scipy", "numpy", "h5py"]
 
@@ -15,23 +18,27 @@ for pkg_name in pkgs:
 if not is_pkg_missing:
 	import tensorflow
 	if int(tensorflow.__version__.split(".")[0]) >= 1:
-		try:
-			user_paths = os.environ['PYTHONPATH'].split(os.pathsep)
-		except KeyError:
-			user_paths = []
-
-		os_name = platform.system().lower()
-		if "linux" in os_name:
-			if os.path.abspath(os.getcwd()) not in user_paths:
-				os.system("echo export PYTHONPATH=\$PYTHONPATH:$PWD >> ~/.bashrc")
-				os.system("export PYTHONPATH=\$PYTHONPATH:$PWD")
-
-			os.system("wget -nc http://files.heuritech.com/weights/alexnet_weights.h5 -P ./examples")
-		elif "darwin" in os_name:
-			if os.path.abspath(os.getcwd()) not in user_paths:
-				os.system("echo export PYTHONPATH=\$PYTHONPATH:$PWD >> ~/.bash_profile")
-				os.system("export PYTHONPATH=\$PYTHONPATH:$PWD")
-
-			os.system("curl -L -o ./examples/alexnet_weights.h5 -C - http://files.heuritech.com/weights/alexnet_weights.h5")
+		setup(
+			name = "tf_cnnvis",
+			version = "1.0.0",
+			author = "Bhagyesh Vikani & Falak Shah",
+			author_email = "bhagyesh@infocusp.in & falak@infocusp.in",
+			description = ("tf_cnnvis is a CNN visualization library based on the paper 'Visualizing and Understanding Convolutional Networks' by Matthew D. Zeiler and Rob Fergus. We use the 'TensorFlow' library to reconstruct the input images from different layers of the convolutional neural network. The generated images are displayed in [TensorBoard](https://www.tensorflow.org/get_started/summaries_and_tensorboard)."),
+			license = "BSD",
+			keywords = "CNN TensorFlow",
+			url = "https://bitbucket.org/infocusp/tf_cnnvis.git",
+			packages=['tf_cnnvis'],
+			long_description=read('ReadMe.md'),
+			classifiers=[
+				"Development Status :: 3 - Alpha",
+				"Intended Audience :: Science/Research",
+				"Topic :: Utilities",
+				"License :: OSI Approved :: BSD License",
+				"Natural Language :: English",
+				"Operating System :: Unix",
+				"Programming Language :: Python",
+				"Topic :: Scientific/Engineering :: Visualization",
+			],
+		)
 	else:
 		print("Please upgrade TensorFlow to 1.0.0")

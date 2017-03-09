@@ -4,6 +4,7 @@ import numpy as np
 import tensorflow as tf
 from math import ceil, sqrt
 from scipy.misc import imsave
+from scipy.stats.mstats import winsorize
 from tensorflow.python.framework import ops
 from tensorflow.python.ops import gen_nn_ops
 
@@ -51,7 +52,7 @@ def _save_model(graph):
     :rtype: String
     """
 
-    PATH = "./model/tmp-model"
+    PATH = os.path.join("model", "tmp-model")
     _make_dir(path = os.path.dirname(PATH))
 
     with graph.as_default():
@@ -372,8 +373,11 @@ def _visualization_by_layer_name(
     grid_images = _images_to_grid(out)
 
     act_shape = activations.shape
-    activations = [np.expand_dims(im, axis = 3) for im in np.transpose(activations, (3, 0, 1, 2))]
-    grid_activations = _images_to_grid(activations)
+    if len(act_shape) == 2:
+        grid_activations = [np.expand_dims(convert_into_grid(im[:,np.newaxis,np.newaxis,np.newaxis], padding=0), axis = 0) for im in activations]
+    else:
+        activations = [np.expand_dims(im, axis = 3) for im in np.transpose(activations, (3, 0, 1, 2))]
+        grid_activations = _images_to_grid(activations)
 
     # write results into disk
     if path_outdir != None:
@@ -391,16 +395,15 @@ def _visualization_by_layer_name(
 def _write_into_disk(path_outdir, images, grid_images, grid_activations, layer):
     is_success = True
 
-    path_out = os.path.join(path_outdir, layer.lower())
+    path_out = os.path.join(path_outdir, layer.lower().replace("/", "_"))
 
     for i in range(len(grid_images)):
         grid_image_path = os.path.join(path_out, "image_%d" % (i))
-        grid_activation_path = os.path.join(path_out, "image_%d" % (i), "activations")
-
         is_success = _make_dir(grid_image_path)
-        is_success = _make_dir(grid_activation_path)
-
         imsave(os.path.join(grid_image_path, "grid_image"), grid_images[i][0], format = "png")
+
+        grid_activation_path = os.path.join(path_out, "image_%d" % (i), "activations")
+        is_success = _make_dir(grid_activation_path)
         imsave(os.path.join(grid_activation_path, "grid_activation"), grid_activations[i][0,:,:,0], format = "png")
 
     # for j in range(len(images[i])):
@@ -521,7 +524,7 @@ def convert_into_grid(
         x0, x1 = 0, W
         for x in range(grid_size):
             if next_idx < N:
-                grid[y0:y1, x0:x1] = image_normalization(Xs[next_idx], ubound=ubound)
+                grid[y0:y1, x0:x1] = image_normalization(winsorize(Xs[next_idx], limits=(0.005, 0.005)), ubound=ubound)
                 next_idx += 1
             x0 += W + padding
             x1 += W + padding
