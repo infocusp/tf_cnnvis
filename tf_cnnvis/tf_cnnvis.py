@@ -1,5 +1,7 @@
 # imports
 import os
+import time
+import datetime
 import numpy as np
 import tensorflow as tf
 from math import ceil, sqrt
@@ -280,6 +282,7 @@ def _visualization_by_layer_name(
 	:rtype: boolean
 	"""
 
+	start = -time.time()
 	is_success = True
 
 	x = []
@@ -322,7 +325,7 @@ def _visualization_by_layer_name(
 			if X == None:
 				for i in g.get_operations():
 					# parsing input placeholders
-					if "Placeholder" in i.name:
+					if "placeholder" == i.type.lower():
 						if not is_value_feed_dict:
 							x.append(i.outputs[0])
 							if input_tensor != None:
@@ -375,9 +378,10 @@ def _visualization_by_layer_name(
 
 	act_shape = activations.shape
 	if len(act_shape) == 2:
-		grid_activations = [np.expand_dims(convert_into_grid(im[:,np.newaxis,np.newaxis,np.newaxis], padding=0), axis = 0) for im in activations]
+		grid_activations = [np.expand_dims(image_normalization(convert_into_grid(im[:,np.newaxis,np.newaxis,np.newaxis], padding=0)), axis = 0) for im in activations]
 	else:
 		activations = [np.expand_dims(im, axis = 3) for im in np.transpose(activations, (3, 0, 1, 2))]
+		activations = _im_normlize(activations)
 		grid_activations = _images_to_grid(activations)
 
 	# write results into disk
@@ -388,7 +392,8 @@ def _visualization_by_layer_name(
 	if path_logdir != None:
 		is_success = _write_into_log(path_logdir, original_images, out, grid_images, activations, grid_activations, layer_name)
 
-	print("Reconstruction Completed for %s layer." % (layer_name))
+	start += time.time()
+	print("Reconstruction Completed for %s layer. Time taken = %f s" % (layer_name, start))
 
 	return is_success
 
@@ -410,11 +415,14 @@ def _write_into_disk(path_outdir, images, grid_images, grid_activations, layer):
 	path_out = os.path.join(path_outdir, layer.lower().replace("/", "_"))
 
 	for i in range(len(grid_images)):
-		grid_image_path = os.path.join(path_out, "image_%d" % (i))
+		time_stamp = time.time()
+		time_stamp = datetime.datetime.fromtimestamp(time_stamp).strftime('%Y-%m-%d_%H:%M:%S')
+
+		grid_image_path = os.path.join(path_out, "image_%s" % (time_stamp))
 		is_success = _make_dir(grid_image_path)
 		imsave(os.path.join(grid_image_path, "grid_image"), grid_images[i][0], format = "png")
 
-		grid_activation_path = os.path.join(path_out, "image_%d" % (i), "activations")
+		grid_activation_path = os.path.join(path_out, "image_%s" % (time_stamp), "activations")
 		is_success = _make_dir(grid_activation_path)
 		imsave(os.path.join(grid_activation_path, "grid_activation"), grid_activations[i][0,:,:,0], format = "png")
 
