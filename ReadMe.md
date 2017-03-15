@@ -22,9 +22,11 @@ Figure 1: Original image and the reconstructed versions from maxpool layer 1,2 a
 
 ## Requirements:
 * Tensorflow (>= 1.0)
-* Numpy
-* Scipy
+* numpy
+* scipy
 * h5py
+* wget
+* Pillow
 
 ## Setup script
 Clone the repository
@@ -39,6 +41,7 @@ And run
 
 ```
 #!bash
+sudo pip install setuptools
 
 sudo python setup.py install
 sudo python setup.py clean
