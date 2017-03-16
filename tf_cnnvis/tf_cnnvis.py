@@ -554,7 +554,7 @@ def convert_into_grid(
 
 
 # normalize image (min-max normalization)
-def image_normalization(image, ubound = 255.0, epsilon = 1e-7):
+def image_normalization(image, s = 0.1, ubound = 255.0, epsilon = 1e-7):
 	"""
 	Min-Max image normalization. Convert pixle values in range [0, ubound]
 
@@ -574,10 +574,13 @@ def image_normalization(image, ubound = 255.0, epsilon = 1e-7):
 		A normalized image
 	:rtype: 3-D numpy array
 	"""
-	img_min = np.min(image)
-	img_max = np.max(image)
+	# img_min = np.min(image)
+	# img_max = np.max(image)
 
-	return (((image - img_min) * ubound) / (img_max - img_min + epsilon)).astype('uint8')
+	# return (((image - img_min) * ubound) / (img_max - img_min + epsilon)).astype('uint8')
+
+	temp = (image - image.mean()) / np.maximum(image.std(), epsilon)
+	return (temp * s + 0.5).astype('uint8')
 
 
 # dir exists or not
