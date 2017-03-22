@@ -3,6 +3,7 @@ import os
 import sys
 import pkgutil
 
+# required pkgs
 dependencies = ['numpy', 'scipy', 'tensorflow', 'h5py', 'wget', 'Pillow']
 
 try: 
