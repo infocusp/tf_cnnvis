@@ -1,3 +1,4 @@
+# Setup script for tf_cnnvis
 import os
 import sys
 import pkgutil
@@ -46,6 +47,7 @@ setup(
 	}
 )
 
+# Check TF version as it requires > 1.0
 try:
 	import tensorflow
 	if int(tensorflow.__version__.split(".")[0]) < 1:
