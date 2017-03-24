@@ -54,17 +54,14 @@ def _save_model(graph):
 	:rtype: String
 	"""
 
-	PATH = os.path.join("model", "tmp-model")
-	_make_dir(path = os.path.dirname(PATH))
+	_make_dir(path = "./Model")
 
 	with graph.as_default():
 		with tf.Session() as sess:
-			fake_var = tf.Variable([0.0], name = "fake_var")
 			sess.run(tf.global_variables_initializer())
-			saver = tf.train.Saver()
-			saver.save(sess, PATH)
+			tf.train.write_graph(graph.as_graph_def(), "./Model", "weights.pb", False)
 
-	return PATH + ".meta"
+	return os.path.join("Model", "weights.pb")
 
 
 # All visualization of convolution happens here
@@ -143,7 +140,10 @@ def get_visualization(
 
 	with tf.Graph().as_default() as g:
 		with g.gradient_override_map({'Relu': 'GuidedRelu', 'LRN': 'Customlrn'}): # overwrite gradients with custom gradients
-			new_saver = tf.train.import_meta_graph(PATH) # Import graph
+			with tf.gfile.FastGFile(PATH, 'rb') as f:
+				graph_def = tf.GraphDef()
+				graph_def.ParseFromString(f.read())
+				tf.import_graph_def(graph_def, name='')
 
 		if isinstance(layers, list):
 			for layer in layers:
@@ -291,11 +291,11 @@ def _visualization_by_layer_name(
 	try:
 		with graph.as_default() as g:
 			# get op of name given in method argument layer_name
-			op = g.get_operation_by_name(name = layer_name)
+			op = get_operation(graph = g, name = layer_name)
 			op_tensor = op.outputs[0] # output tensor of the operation
 
-			# create all ones tensor to provide grad_ys
-			tensor_shape = op_tensor.get_shape().as_list() # get shape of tensor
+			# get shape of tensor
+			tensor_shape = op_tensor.get_shape().as_list()
 
 			global MAX_FEATUREMAP
 			# check for limit on number of feature maps
@@ -303,38 +303,30 @@ def _visualization_by_layer_name(
 				print("Skipping. Too many featuremap. May cause memory errors.")
 				return
 
-			all_ones = tf.ones_like(op_tensor)
-
-			# creating placeholders to pass masks
-			mask = [tf.placeholder(tf.float32, [tensor_shape[-1]]) for i in range(n)]
-			np_mask = np.identity(n = tensor_shape[-1])
-
 			# creating feed_dict and find input tensors
 			# if not provided
 			X = None
 			is_value_feed_dict = isinstance(value_feed_dict, dict)
 
+			# if value_feed_dict is a dict then
+			# find tensor in current graph by name
 			if is_value_feed_dict:
 				for key_op in value_feed_dict.keys():
-					tmp = g.get_tensor_by_name(name = key_op.name)
+					tmp = get_tensor(graph = g, name = key_op.name)
 					feed_dict[tmp] = value_feed_dict[key_op]
 
-					if input_tensor != None and input_tensor.name == tmp.name:
-						X = tmp
+			# if value_feed_dict is not a dict or
+			# input tensor is not provided
+			if not is_value_feed_dict or input_tensor == None:
+				# parsing input placeholders
+				for op in g.get_operations():
+					if "placeholder" == op.type.lower():
+						x.append(op.outputs[0])
 
-			if X == None:
-				for i in g.get_operations():
-					# parsing input placeholders
-					if "placeholder" == i.type.lower():
-						if not is_value_feed_dict:
-							x.append(i.outputs[0])
-							if input_tensor != None:
-								X = g.get_tensor_by_name(name = input_tensor.name)
-							else:
-								X = x[0]
-						else:
-							X = i.outputs[0]
-							break
+			if input_tensor != None:
+				X = get_tensor(graph = g, name = input_tensor.name)
+			else:
+				X = x[0]
 
 			if not is_value_feed_dict:
 				value_feed_dict[0] = value_feed_dict[0][:MAX_IMAGES] # only taking first MAX_IMAGES from given images array
@@ -344,22 +336,23 @@ def _visualization_by_layer_name(
 				feed_dict[X] = feed_dict[X][:MAX_IMAGES] # only taking first MAX_IMAGES from given images array
 				original_images = feed_dict[X]
 
+			# creating placeholders to pass featuremaps and 
 			# creating gradient ops
-			reconstruct = [tf.gradients(op_tensor, X, grad_ys=tf.multiply(all_ones, mask[i]))[0] for i in range(n)]
+			featuremap = [tf.placeholder(tf.int32) for i in range(n)]
+			reconstruct = [tf.gradients(tf.transpose(tf.transpose(op_tensor)[featuremap[i]]), X)[0] for i in range(n)]
 
-			out = [] # list to store reconstructed images
-			activations = [] # list to store activations
+			out = [] # list to store reconstructed image_summary_t1
 
 			# computing reconstruction
 			with tf.Session() as sess:
-				sess.run(tf.global_variables_initializer())
+				# sess.run(tf.global_variables_initializer())
 
 				# Execute the gradient operations in batches of 'n'
 				for i in xrange(0, tensor_shape[-1], n):
 					c = 0
 					for j in range(n):
 						if (i + j) < tensor_shape[-1]:
-							feed_dict[mask[j]] = np_mask[i + j]
+							feed_dict[featuremap[j]] = i + j
 							c += 1
 					if c > 0:
 						out.extend(sess.run(reconstruct[:c], feed_dict = feed_dict))
@@ -388,7 +381,7 @@ def _visualization_by_layer_name(
 	if path_outdir != None:
 		is_success = _write_into_disk(path_outdir, out, grid_images, grid_activations, layer_name)
 
-	# write results into log file of TFBOARD
+	# write results into log file
 	if path_logdir != None:
 		is_success = _write_into_log(path_logdir, original_images, out, grid_images, activations, grid_activations, layer_name)
 
@@ -397,6 +390,12 @@ def _visualization_by_layer_name(
 
 	return is_success
 
+
+def get_operation(graph, name):
+	return graph.get_operation_by_name(name = name)
+
+def get_tensor(graph, name):
+	return graph.get_tensor_by_name(name = name)
 
 def _im_normlize(images, limits = (0.0025, 0.0025), ubound = 255.0):
 	N = len(images)
@@ -574,13 +573,13 @@ def image_normalization(image, s = 0.1, ubound = 255.0, epsilon = 1e-7):
 		A normalized image
 	:rtype: 3-D numpy array
 	"""
-	# img_min = np.min(image)
-	# img_max = np.max(image)
+	img_min = np.min(image)
+	img_max = np.max(image)
 
-	# return (((image - img_min) * ubound) / (img_max - img_min + epsilon)).astype('uint8')
+	return (((image - img_min) * ubound) / (img_max - img_min + epsilon)).astype('uint8')
 
-	temp = (image - image.mean()) / np.maximum(image.std(), epsilon)
-	return (temp * s + 0.5).astype('uint8')
+	# temp = (image - image.mean()) / np.maximum(image.std(), epsilon)
+	# return (temp * s + 0.5).astype('uint8')
 
 
 # dir exists or not
