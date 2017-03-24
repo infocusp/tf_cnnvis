@@ -1,7 +1,9 @@
+# Setup script for tf_cnnvis
 import os
 import sys
 import pkgutil
 
+# required pkgs
 dependencies = ['numpy', 'scipy', 'tensorflow', 'h5py', 'wget', 'Pillow']
 
 try: 
@@ -46,6 +48,7 @@ setup(
 	}
 )
 
+# Check TF version as it requires > 1.0
 try:
 	import tensorflow
 	if int(tensorflow.__version__.split(".")[0]) < 1:

@@ -2,14 +2,13 @@
 
 tf_cnnvis is a CNN visualization library based on the paper [Visualizing and Understanding Convolutional Networks](https://www.cs.nyu.edu/~fergus/papers/zeilerECCV2014.pdf) by Matthew D. Zeiler and Rob Fergus. We use the [TensorFlow](https://www.tensorflow.org/) library to reconstruct the input images from different layers of the convolutional neural network. The generated images are displayed in [TensorBoard](https://www.tensorflow.org/get_started/summaries_and_tensorboard)
 
+<img src="https://bitbucket.org/repo/Lyk4Mq/images/4115906191-images.jpg" width="196" height="196"> <img src="https://bitbucket.org/repo/Lyk4Mq/images/780477117-reconstructed_1.png" width="196" height="196"> <img src="https://bitbucket.org/repo/Lyk4Mq/images/1721308804-reconstructed_2.png" width="196" height="196"> <img src="https://bitbucket.org/repo/Lyk4Mq/images/856735034-reconstructed_3.png" width="196" height="196">
 
 
-![images.jpg](https://bitbucket.org/repo/Lyk4Mq/images/4115906191-images.jpg)  ![reconstructed_1.png](https://bitbucket.org/repo/Lyk4Mq/images/780477117-reconstructed_1.png)  ![reconstructed_2.png](https://bitbucket.org/repo/Lyk4Mq/images/1721308804-reconstructed_2.png)  ![reconstructed_3.png](https://bitbucket.org/repo/Lyk4Mq/images/856735034-reconstructed_3.png)  
+<img src="https://bitbucket.org/repo/Lyk4Mq/images/1446219986-Lena.png" width="196" height="196"> <img src="https://bitbucket.org/repo/Lyk4Mq/images/3167061216-lena_reconstructed_1.png" width="196" height="196"> <img src="https://bitbucket.org/repo/Lyk4Mq/images/3614692134-lena_reconstructed_2.png" width="196" height="196"> <img src="https://bitbucket.org/repo/Lyk4Mq/images/124519901-lena_reconstructed_3.png" width="196" height="196">
 
 
-![Lena.png](https://bitbucket.org/repo/Lyk4Mq/images/1446219986-Lena.png)  ![lena_reconstructed_1.png](https://bitbucket.org/repo/Lyk4Mq/images/3167061216-lena_reconstructed_1.png)  ![lena_reconstructed_2.png](https://bitbucket.org/repo/Lyk4Mq/images/3614692134-lena_reconstructed_2.png)  ![lena_reconstructed_3.png](https://bitbucket.org/repo/Lyk4Mq/images/124519901-lena_reconstructed_3.png)
-
-![mancoffee.png](https://bitbucket.org/repo/Lyk4Mq/images/995747735-mancoffee.png)  ![man_reconstructed_1.png](https://bitbucket.org/repo/Lyk4Mq/images/755140547-man_reconstructed_1.png)  ![man_reconstructed_2.png](https://bitbucket.org/repo/Lyk4Mq/images/3249576627-man_reconstructed_2.png)  ![man_reconstructed_3.png](https://bitbucket.org/repo/Lyk4Mq/images/744562091-man_reconstructed_3.png)
+<img src="https://bitbucket.org/repo/Lyk4Mq/images/995747735-mancoffee.png" width="196" height="196"> <img src="https://bitbucket.org/repo/Lyk4Mq/images/755140547-man_reconstructed_1.png" width="196" height="196"> <img src="https://bitbucket.org/repo/Lyk4Mq/images/3249576627-man_reconstructed_2.png" width="196" height="196"> <img src="https://bitbucket.org/repo/Lyk4Mq/images/744562091-man_reconstructed_3.png" width="196" height="196">
 
 Figure 1: Original image and the reconstructed versions from maxpool layer 1,2 and 3 of Alexnet generated using tf_cnnvis. 
 
@@ -22,9 +21,11 @@ Figure 1: Original image and the reconstructed versions from maxpool layer 1,2 a
 
 ## Requirements:
 * Tensorflow (>= 1.0)
-* Numpy
-* Scipy
+* numpy
+* scipy
 * h5py
+* wget
+* Pillow
 
 ## Setup script
 Clone the repository
@@ -32,14 +33,14 @@ Clone the repository
 ```
 #!bash
 
-git clone https://bitbucket.org/infocusp/tf_cnnvis.git
+git clone https://github.com/InFoCusp/tf_cnnvis.git
 ```
 
 And run 
 
 ```
 #!bash
-
+sudo pip install setuptools
 sudo python setup.py install
 sudo python setup.py clean
 ```
