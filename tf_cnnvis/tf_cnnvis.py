@@ -54,14 +54,17 @@ def _save_model(graph):
 	:rtype: String
 	"""
 
-	_make_dir(path = "./Model")
+	PATH = os.path.join("model", "tmp-model")
+	_make_dir(path = os.path.dirname(PATH))
 
 	with graph.as_default():
 		with tf.Session() as sess:
+			fake_var = tf.Variable([0.0], name = "fake_var")
 			sess.run(tf.global_variables_initializer())
-			tf.train.write_graph(graph.as_graph_def(), "./Model", "weights.pb", False)
+			saver = tf.train.Saver()
+			saver.save(sess, PATH)
 
-	return os.path.join("Model", "weights.pb")
+	return PATH + ".meta"
 
 
 # All visualization of convolution happens here
@@ -140,10 +143,9 @@ def get_visualization(
 
 	with tf.Graph().as_default() as g:
 		with g.gradient_override_map({'Relu': 'GuidedRelu', 'LRN': 'Customlrn'}): # overwrite gradients with custom gradients
-			with tf.gfile.FastGFile(PATH, 'rb') as f:
-				graph_def = tf.GraphDef()
-				graph_def.ParseFromString(f.read())
-				tf.import_graph_def(graph_def, name='')
+			with tf.Session() as sess:
+				new_saver = tf.train.import_meta_graph(PATH) # Import graph
+				new_saver.restore(sess, tf.train.latest_checkpoint(os.path.dirname(PATH)))
 
 		if isinstance(layers, list):
 			for layer in layers:
@@ -345,7 +347,7 @@ def _visualization_by_layer_name(
 
 			# computing reconstruction
 			with tf.Session() as sess:
-				# sess.run(tf.global_variables_initializer())
+				sess.run(tf.global_variables_initializer())
 
 				# Execute the gradient operations in batches of 'n'
 				for i in xrange(0, tensor_shape[-1], n):
