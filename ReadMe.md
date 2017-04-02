@@ -26,6 +26,11 @@ Figure 1: Original image and the reconstructed versions from maxpool layer 1,2 a
 * h5py
 * wget
 * Pillow
+* six
+
+If you are using pip you can install these with
+
+```pip install tensorflow numpy scipy h5py wget Pillow six```
 
 ## Setup script
 Clone the repository
