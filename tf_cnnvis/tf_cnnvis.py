@@ -90,7 +90,6 @@ def get_visualization(
 	:param value_feed_dict: 
 		Values of placeholders to feed while evaluting.
 		dict : {placeholder1 : value1, ...}.
-		list : [value1, value2, ...].
 	:type value_feed_dict: dict or list
 
 	:param input_tensor: 
@@ -188,7 +187,6 @@ def _visualization_by_layer_type(
 	:param value_feed_dict: 
 		Values of placeholders to feed while evaluting.
 		dict : {placeholder1 : value1, ...}.
-		list : [value1, value2, ...].
 	:type value_feed_dict: dict or list
 
 	:param input_tensor: 
@@ -256,7 +254,6 @@ def _visualization_by_layer_name(
 	:param value_feed_dict: 
 		Values of placeholders to feed while evaluting.
 		dict : {placeholder1 : value1, ...}.
-		list : [value1, value2, ...].
 	:type value_feed_dict: dict or list
 
 	:param input_tensor: 
@@ -308,48 +305,31 @@ def _visualization_by_layer_name(
 				return
 
 			# creating feed_dict and find input tensors
-			# if not provided
 			X = None
-			is_value_feed_dict = isinstance(value_feed_dict, dict)
 
-			# if value_feed_dict is a dict then
-			# find tensor in current graph by name
-			if is_value_feed_dict:
-				for key_op in value_feed_dict.keys():
-					tmp = get_tensor(graph = g, name = key_op.name)
-					feed_dict[tmp] = value_feed_dict[key_op]
+			# find tensors of value_feed_dict
+			# in current graph by name
+			for key_op in value_feed_dict.keys():
+				tmp = get_tensor(graph = g, name = key_op.name)
+				feed_dict[tmp] = value_feed_dict[key_op]
+				x.append(tmp)
 
-			# if value_feed_dict is not a dict or
-			# input tensor is not provided
-			if not is_value_feed_dict or input_tensor == None:
-				# parsing input placeholders
-				for op in g.get_operations():
-					if "placeholder" == op.type.lower():
-						x.append(op.outputs[0])
-
-			if input_tensor != None:
-				X = get_tensor(graph = g, name = input_tensor.name)
-			else:
-				X = x[0]
-
-			if not is_value_feed_dict:
-				value_feed_dict[0] = value_feed_dict[0][:MAX_IMAGES] # only taking first MAX_IMAGES from given images array
-				original_images = value_feed_dict[0]
-				feed_dict = dict(zip(x, value_feed_dict)) # prepare feed_dict for the reconstruction
-			else:
-				feed_dict[X] = feed_dict[X][:MAX_IMAGES] # only taking first MAX_IMAGES from given images array
-				original_images = feed_dict[X]
-
-			# creating placeholders to pass featuremaps and 
-			# creating gradient ops
-			featuremap = [tf.placeholder(tf.int32) for i in range(n)]
-			reconstruct = [tf.gradients(tf.transpose(tf.transpose(op_tensor)[featuremap[i]]), X)[0] for i in range(n)]
+			X = x[0]
+			feed_dict[X] = feed_dict[X][:MAX_IMAGES] # only taking first MAX_IMAGES from given images array
+			original_images = feed_dict[X]
 
 			out = [] # list to store reconstructed image_summary_t1
-
 			# computing reconstruction
 			with tf.Session() as sess:
 				sess.run(tf.global_variables_initializer())
+				if input_tensor != None:
+					X = get_tensor(graph = g, name = input_tensor.name)
+					original_images = sess.run(X, feed_dict = feed_dict)
+
+				# creating placeholders to pass featuremaps and 
+				# creating gradient ops
+				featuremap = [tf.placeholder(tf.int32) for i in range(n)]
+				reconstruct = [tf.gradients(tf.transpose(tf.transpose(op_tensor)[featuremap[i]]), X)[0] for i in range(n)]
 
 				# Execute the gradient operations in batches of 'n'
 				for i in range(0, tensor_shape[-1], n):
@@ -423,7 +403,10 @@ def _write_into_disk(path_outdir, images, grid_images, grid_activations, layer):
 
 		grid_image_path = os.path.join(path_out, "image_%s" % (time_stamp))
 		is_success = _make_dir(grid_image_path)
-		imsave(os.path.join(grid_image_path, "grid_image"), grid_images[i][0], format = "png")
+		if grid_images[i].shape[-1] == 1:
+			imsave(os.path.join(grid_image_path, "grid_image"), grid_images[i][0,:,:,0], format = "png")
+		else:
+			imsave(os.path.join(grid_image_path, "grid_image"), grid_images[i][0], format = "png")
 
 		grid_activation_path = os.path.join(path_out, "image_%s" % (time_stamp), "activations")
 		is_success = _make_dir(grid_activation_path)
@@ -445,25 +428,24 @@ def _write_into_log(path_logdir, original_images, images, grid_images, activatio
 	is_success = _make_dir(path_log)
 
 	with tf.Graph().as_default() as g:
-		image1 = tf.placeholder(tf.float32, shape = [None, None, None, 3])
-		image2 = tf.placeholder(tf.float32, shape = [None, None, None, 1])
+		image = tf.placeholder(tf.float32, shape = [None, None, None, None])
 
-		image_summary_t1 = tf.summary.image(name = "One_By_One_Deconv", tensor = image1, max_outputs = MAX_FEATUREMAP)
-		image_summary_t2 = tf.summary.image(name = "All_At_Once_Deconv", tensor = image1, max_outputs = MAX_IMAGES)
+		image_summary_t1 = tf.summary.image(name = "One_By_One_Deconv", tensor = image, max_outputs = MAX_FEATUREMAP)
+		image_summary_t2 = tf.summary.image(name = "All_At_Once_Deconv", tensor = image, max_outputs = MAX_IMAGES)
 
-		# image_summary_t3 = tf.summary.image(name = "One_By_One_Activations", tensor = image2, max_outputs = MAX_FEATUREMAP)
-		image_summary_t4 = tf.summary.image(name = "All_At_Once_Activations", tensor = image2, max_outputs = MAX_IMAGES)
+		# image_summary_t3 = tf.summary.image(name = "One_By_One_Activations", tensor = image, max_outputs = MAX_FEATUREMAP)
+		image_summary_t4 = tf.summary.image(name = "All_At_Once_Activations", tensor = image, max_outputs = MAX_IMAGES)
 
-		image_summary_t5 = tf.summary.image(name = "Input_Images", tensor = image1, max_outputs = MAX_IMAGES)
+		image_summary_t5 = tf.summary.image(name = "Input_Images", tensor = image, max_outputs = MAX_IMAGES)
 
 		with tf.Session() as sess:
-			summary1 = sess.run(image_summary_t1, feed_dict = {image1 : np.concatenate(images, axis = 0)})
-			summary2 = sess.run(image_summary_t2, feed_dict = {image1 : np.concatenate(grid_images, axis = 0)})
+			summary1 = sess.run(image_summary_t1, feed_dict = {image : np.concatenate(images, axis = 0)})
+			summary2 = sess.run(image_summary_t2, feed_dict = {image : np.concatenate(grid_images, axis = 0)})
 
-			# summary3 = sess.run(image_summary_t3, feed_dict = {image2 : np.concatenate(activations, axis = 0)})
-			summary4 = sess.run(image_summary_t4, feed_dict = {image2 : np.concatenate(grid_activations, axis = 0)})
+			# summary3 = sess.run(image_summary_t3, feed_dict = {image : np.concatenate(activations, axis = 0)})
+			summary4 = sess.run(image_summary_t4, feed_dict = {image : np.concatenate(grid_activations, axis = 0)})
 
-			summary5 = sess.run(image_summary_t5, feed_dict = {image1 : original_images})
+			summary5 = sess.run(image_summary_t5, feed_dict = {image : original_images})
 		try:
 			file_writer = tf.summary.FileWriter(path_log, g) # create file writer
 			# compute and write the summary
