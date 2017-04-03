@@ -7,6 +7,8 @@ import tensorflow as tf
 from math import ceil, sqrt
 from scipy.misc import imsave
 from scipy.stats.mstats import winsorize
+from six.moves import range
+from six import string_types
 from tensorflow.python.framework import ops
 from tensorflow.python.ops import gen_nn_ops
 
@@ -132,7 +134,7 @@ def get_visualization(
 
 	if isinstance(graph_or_path, tf.Graph):
 		PATH = _save_model(graph_or_path)
-	elif isinstance(graph_or_path, basestring):
+	elif isinstance(graph_or_path, string_types):
 		PATH = graph_or_path
 	else:
 		print("graph_or_path must be a object of graph or string.")
@@ -350,7 +352,7 @@ def _visualization_by_layer_name(
 				sess.run(tf.global_variables_initializer())
 
 				# Execute the gradient operations in batches of 'n'
-				for i in xrange(0, tensor_shape[-1], n):
+				for i in range(0, tensor_shape[-1], n):
 					c = 0
 					for j in range(n):
 						if (i + j) < tensor_shape[-1]:

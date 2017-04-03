@@ -4,7 +4,7 @@ import sys
 import pkgutil
 
 # required pkgs
-dependencies = ['numpy', 'scipy', 'tensorflow', 'h5py', 'wget', 'Pillow']
+dependencies = ['numpy', 'scipy', 'tensorflow', 'h5py', 'wget', 'Pillow', 'six']
 
 try: 
 	from setuptools import setup
