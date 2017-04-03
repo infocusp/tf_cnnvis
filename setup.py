@@ -4,7 +4,7 @@ import sys
 import pkgutil
 
 # required pkgs
-dependencies = ['numpy', 'scipy', 'tensorflow', 'h5py', 'wget', 'Pillow', 'six']
+dependencies = ['numpy', 'scipy', 'h5py', 'wget', 'Pillow', 'six']
 
 try: 
 	from setuptools import setup
@@ -28,8 +28,8 @@ setup(
 	author_email = "bhagyesh@infocusp.in & falak@infocusp.in",
 	description = ("tf_cnnvis is a CNN visualization library based on the paper 'Visualizing and Understanding Convolutional Networks' by Matthew D. Zeiler and Rob Fergus. We use the 'TensorFlow' library to reconstruct the input images from different layers of the convolutional neural network. The generated images are displayed in [TensorBoard](https://www.tensorflow.org/get_started/summaries_and_tensorboard)."),
 	license = "BSD",
-	keywords = "CNN TensorFlow",
-	url = "https://bitbucket.org/infocusp/tf_cnnvis.git",
+	keywords = "tensorflow tensorboard convolutional-neural-networks cnn visualization",
+	url = "https://github.com/InFoCusp/tf_cnnvis",
 	packages=['tf_cnnvis'],
 	long_description=read('ReadMe.md'),
 	classifiers=[
@@ -54,4 +54,4 @@ try:
 	if int(tensorflow.__version__.split(".")[0]) < 1:
 		print("Please upgrade TensorFlow to 1.0.0")
 except:
-	pass
+	print("Please install TenSorflow with 'pip install tensorflow'")
