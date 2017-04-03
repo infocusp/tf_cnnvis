@@ -57,9 +57,9 @@ sudo python setup.py clean
 The function to generate the visualizations of the input image reconstructed from the feature maps of a given layer.
 #### Parameters
 * graph_or_path (tf.Graph object or String) – TF graph or [Path-to-saved-graph] as String containing the CNN.
-* value_feed_dict (dict or list) – Values of placeholders to feed while evaluating the graph
+* value_feed_dict (dict) – Values of placeholders to feed while evaluating the graph
     * dict : {placeholder1 : value1, ...}
-    * list : [value1, value2, ...]
+
 * input_tensor (tf.tensor object (Default = None)) – tf.tensor where we pass the input images to the TF graph
 * layers (list or String (Default = 'r')) – 
     * ‘r’ : Reconstruction from all the relu layers 
