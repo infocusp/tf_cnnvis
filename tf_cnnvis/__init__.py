@@ -1,6 +1,8 @@
-from .tf_cnnvis import get_visualization
-from .tf_cnnvis import image_normalization
-from .tf_cnnvis import convert_into_grid
+from .tf_cnnvis import activation_visualization
+from .tf_cnnvis import deconv_visualization
+from .tf_cnnvis import deepdream_visualization
 
-__all__ = ["get_visualization", "image_normalization", "convert_into_grid"]
+from .utils import convert_into_grid
+from .utils import image_normalization
 
+__all__ = ["activation_visualization", "deconv_visualization", "deepdream_visualization", "convert_into_grid", "image_normalization"]
