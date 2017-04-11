@@ -7,7 +7,7 @@ import numpy as np
 from scipy.misc import imsave
 
 from six.moves import range
-from six import string_types, iteritems
+from six import iteritems
 
 import tensorflow as tf
 
@@ -32,6 +32,26 @@ config = {
 	"NUM_LAPLACIAN_LEVEL" : 4,
 	"REGULARIZATION_STRENGTH" : 1e-3
 }
+def reset_config():
+	config = {
+		"N" : 8,
+		"EPS" : 1e-7,
+		"K5X5" : K5X5,
+		"MAX_IMAGES" : 1,
+		"NUM_OCTAVE" : 3,
+		"STEP_SIZE" : 1.0,
+		"NUM_ITERATION" : 50,
+		"OCTAVE_SCALE" : 1.4,
+		"MAX_FEATUREMAP" : 1024,
+		"FORCE_COMPUTE" : False,
+		"TV_DENOISE_WEIGHT" : 2.0,
+		"NUM_LAPLACIAN_LEVEL" : 4,
+		"REGULARIZATION_STRENGTH" : 1e-3
+	}
+def get_config():
+	return config
+def set_config(config_dict):
+	config = config_dict
 
 
 # parse tensors and prepare feed dict
@@ -158,7 +178,7 @@ def _write_deconv(images, layer, path_outdir, path_logdir):
 			file_writer.close() # close file writer
 	return is_success
 ######################################
-# todo (Bhagyesh) test this and change
+# todo (Bhagyesh) test this please
 ######################################
 def _write_deepdream(images, layer, path_outdir, path_logdir):
 	is_success = True

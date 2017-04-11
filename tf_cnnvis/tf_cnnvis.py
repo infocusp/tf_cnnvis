@@ -1,14 +1,11 @@
 # imports
 import os
 import time
-import datetime
-from math import ceil, sqrt
 
 import numpy as np
-from scipy.misc import imsave
 
 from six.moves import range
-from six import string_types, iteritems
+from six import string_types
 
 import tensorflow as tf
 from tensorflow.python.framework import ops
@@ -317,7 +314,7 @@ def _deepdream(graph, sess, op_tensor, X, feed_dict, layer, path_outdir, path_lo
 	tensor_shape = op_tensor.get_shape().as_list()
 
 	with graph.as_default() as g:
-		n = 2
+		n = 4
 		feature_map = tf.placeholder(dtype = tf.int32)
 		tmp1 = tf.reduce_mean(tf.multiply(tf.gather(tf.transpose(op_tensor),feature_map),tf.constant(np.identity(n, dtype=np.float32))), axis = 0)
 		tmp2 = 1e-3 * tf.reduce_mean(tf.square(X), axis = (1, 2 ,3))
