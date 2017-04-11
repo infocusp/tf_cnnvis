@@ -90,7 +90,7 @@ The function to generate the visualizations of the input image reconstructed fro
 #### Returns
 * is_success (boolean) – True if the function ran successfully. False otherwise
 
-**tf_cnnvis.deepdream_visualization(graph_or_path, value_feed_dict, input_tensor=None, layers='r', path_logdir='./Log', path_outdir='./Output')** 
+**tf_cnnvis.deepdream_visualization(graph_or_path, value_feed_dict, layers, input_tensor=None, path_logdir='./Log', path_outdir='./Output')** 
 
 The function to generate the visualizations of the input image reconstructed from the feature maps of a given layer.
 #### Parameters
