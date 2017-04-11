@@ -90,6 +90,22 @@ The function to generate the visualizations of the input image reconstructed fro
 #### Returns
 * is_success (boolean) – True if the function ran successfully. False otherwise
 
+**tf_cnnvis.deepdream_visualization(graph_or_path, value_feed_dict, input_tensor=None, layers='r', path_logdir='./Log', path_outdir='./Output')** 
+
+The function to generate the visualizations of the input image reconstructed from the feature maps of a given layer.
+#### Parameters
+* graph_or_path (tf.Graph object or String) – TF graph or [Path-to-saved-graph] as String containing the CNN.
+* value_feed_dict (dict) – Values of placeholders to feed while evaluating the graph
+    * dict : {placeholder1 : value1, ...}
+
+* layers (String) - name of a layer in TF graph
+* input_tensor (tf.tensor object (Default = None)) – tf.tensor where we pass the input images to the TF graph 
+* path_outdir (String (Default = "./Output")) – [path-to-dir] to save results into disk as images
+* path_logdir (String (Default = "./Log")) – [path-to-log-dir] to make log file for TensorBoard visualization
+
+#### Returns
+* is_success (boolean) – True if the function ran successfully. False otherwise
+
 ## To visualize in TensorBoard
 To start Tensorflow, run the following command in console
 
