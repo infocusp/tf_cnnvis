@@ -52,7 +52,26 @@ sudo python setup.py clean
 
 
 ## API
-**tf_cnnvis.get_visualization(graph_or_path, value_feed_dict, input_tensor=None, layers='r', path_logdir='./Log', path_outdir='./Output', force=False, n=8)** 
+**tf_cnnvis.activation_visualization(graph_or_path, value_feed_dict, input_tensor=None, layers='r', path_logdir='./Log', path_outdir='./Output')** 
+
+The function to generate the activation visualizations of the input image at the given layer.
+#### Parameters
+* graph_or_path (tf.Graph object or String) – TF graph or [Path-to-saved-graph] as String containing the CNN.
+* value_feed_dict (dict) – Values of placeholders to feed while evaluating the graph
+    * dict : {placeholder1 : value1, ...}
+
+* input_tensor (tf.tensor object (Default = None)) – tf.tensor where we pass the input images to the TF graph
+* layers (list or String (Default = 'r')) – 
+    * ‘r’ : Reconstruction from all the relu layers 
+    * ‘p’ : Reconstruction from all the pooling layers 
+    * ‘c’ : Reconstruction from all the convolutional layers
+* path_outdir (String (Default = "./Output")) – [path-to-dir] to save results into disk as images
+* path_logdir (String (Default = "./Log")) – [path-to-log-dir] to make log file for TensorBoard visualization
+
+#### Returns
+* is_success (boolean) – True if the function ran successfully. False otherwise
+
+**tf_cnnvis.deconv_visualization(graph_or_path, value_feed_dict, input_tensor=None, layers='r', path_logdir='./Log', path_outdir='./Output')** 
 
 The function to generate the visualizations of the input image reconstructed from the feature maps of a given layer.
 #### Parameters
@@ -67,8 +86,6 @@ The function to generate the visualizations of the input image reconstructed fro
     * ‘c’ : Reconstruction from all the convolutional layers
 * path_outdir (String (Default = "./Output")) – [path-to-dir] to save results into disk as images
 * path_logdir (String (Default = "./Log")) – [path-to-log-dir] to make log file for TensorBoard visualization
-* force (boolean (Default = False)) – True to took of limit for number of featuremaps in a layer
-* n (int (Default = 8)) – Number of gradient ops computed in parallel. Increasing this number increases amount of parallelization (and hence reduces computation time) at the cost of higher RAM usage. 
 
 #### Returns
 * is_success (boolean) – True if the function ran successfully. False otherwise
@@ -85,17 +102,16 @@ tensorboard --logdir=./Log
 and under tensorboard homepage look under the *Images* tab
 
 ## Additional helper functions
-### image_normalization(image, ubound=255.0, epsilon=1e-07)
+### tf_cnnvis.utils.image_normalization(image, ubound=255.0, epsilon=1e-07)
 Performs Min-Max image normalization. Transforms the pixel values to range [0, ubound]
 #### Parameters
 * image (3-D numpy array) – A numpy array to normalize
 * ubound (float (Default = 255.0)) – upperbound for a image pixel value
-* epsilon (float (Default = 1e-7)) – for computational stability
 
 #### Returns
 * norm_image (3-D numpy array) – The normalized image
 
-### convert_into_grid(Xs, padding=1, ubound=255.0)
+### tf_cnnvis.utils.convert_into_grid(Xs, padding=1, ubound=255.0)
 Convert 4-D numpy array into a grid of images
 #### Parameters
 * Xs (4-D numpy array (first axis contations an image)) – The 4D array of images to put onto grid
