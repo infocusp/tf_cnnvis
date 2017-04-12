@@ -138,3 +138,4 @@ Convert 4-D numpy array into a grid of images
 
 #### Returns
 * (3-D numpy array) – A grid of input images
+

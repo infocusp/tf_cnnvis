@@ -184,7 +184,7 @@ def _write_deepdream(images, layer, path_outdir, path_logdir):
 	is_success = True
 
 	images = _im_normlize([images])
-	layer, k = layer
+	layer, units, k = layer
 
 	# write into disk
 	path_out = os.path.join(path_outdir, layer.lower().replace("/", "_"))
@@ -192,7 +192,7 @@ def _write_deepdream(images, layer, path_outdir, path_logdir):
 
 	for i in range(len(images)):
 		for j in range(images[i].shape[0]):
-			imsave(os.path.join(path_out, "image_%d.png" % ((i * images[i].shape[0]) + j + k)), images[i][j], format = "png")
+			imsave(os.path.join(path_out, "image_%d.png" % (units[(i * images[i].shape[0]) + j + k])), images[i][j], format = "png")
 
 	# write into logfile
 	path_log = os.path.join(path_logdir, layer.lower().replace("/", "_"))

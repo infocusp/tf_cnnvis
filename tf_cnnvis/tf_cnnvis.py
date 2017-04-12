@@ -20,6 +20,7 @@ from .utils import config
 is_Registered = False # prevant duplicate gradient registration
 # map from keyword to layer type
 dict_layer = {'r' : "relu", 'p' : 'maxpool', 'c' : 'conv2d'}
+units = None
 
 # register custom gradients
 def _register_custom_gradients():
@@ -239,39 +240,39 @@ def _visualization_by_layer_name(graph, value_feed_dict, input_tensor, layer_nam
 	start = -time.time()
 	is_success = True
 
-	try:
-		parsed_tensors = parse_tensors_dict(graph, layer_name, value_feed_dict)
-		if parsed_tensors == None:
-			return is_success
-		op_tensor, x, X_in, feed_dict = parsed_tensors
-
-		is_deep_dream = True
-		with graph.as_default() as g:
-			# computing reconstruction
-			with tf.Session() as sess:
-				sess.run(tf.global_variables_initializer())
-				X = X_in
-				if input_tensor != None:
-					X = get_tensor(graph = g, name = input_tensor.name)
-				# original_images = sess.run(X, feed_dict = feed_dict)
-
-				results = None
-				if method == "act":
-					# compute activations
-					results = _activation(graph, sess, op_tensor, feed_dict)
-				elif method == "deconv":
-					# deconvolution
-					results = _deconvolution(graph, sess, op_tensor, X, feed_dict)
-				elif method == "deepdream":
-					# deepdream
-					is_success = _deepdream(graph, sess, op_tensor, X, feed_dict, layer_name, path_outdir, path_logdir)
-					is_deep_dream = False
-
-				sess = None
-	except:
-		is_success = False
-		print("No Layer with layer name = %s" % (layer_name))
+	# try:
+	parsed_tensors = parse_tensors_dict(graph, layer_name, value_feed_dict)
+	if parsed_tensors == None:
 		return is_success
+	op_tensor, x, X_in, feed_dict = parsed_tensors
+
+	is_deep_dream = True
+	with graph.as_default() as g:
+		# computing reconstruction
+		with tf.Session() as sess:
+			sess.run(tf.global_variables_initializer())
+			X = X_in
+			if input_tensor != None:
+				X = get_tensor(graph = g, name = input_tensor.name)
+			# original_images = sess.run(X, feed_dict = feed_dict)
+
+			results = None
+			if method == "act":
+				# compute activations
+				results = _activation(graph, sess, op_tensor, feed_dict)
+			elif method == "deconv":
+				# deconvolution
+				results = _deconvolution(graph, sess, op_tensor, X, feed_dict)
+			elif method == "deepdream":
+				# deepdream
+				is_success = _deepdream(graph, sess, op_tensor, X, feed_dict, layer_name, path_outdir, path_logdir)
+				is_deep_dream = False
+
+			sess = None
+	# except:
+	# 	is_success = False
+	# 	print("No Layer with layer name = %s" % (layer_name))
+	# 	return is_success
 
 	if is_deep_dream:
 		is_success = write_results(results, layer_name, path_outdir, path_logdir, method = method)
@@ -314,9 +315,9 @@ def _deepdream(graph, sess, op_tensor, X, feed_dict, layer, path_outdir, path_lo
 	tensor_shape = op_tensor.get_shape().as_list()
 
 	with graph.as_default() as g:
-		n = 4
+		n = (config["N"] + 1) // 2
 		feature_map = tf.placeholder(dtype = tf.int32)
-		tmp1 = tf.reduce_mean(tf.multiply(tf.gather(tf.transpose(op_tensor),feature_map),tf.constant(np.identity(n, dtype=np.float32))), axis = 0)
+		tmp1 = tf.reduce_mean(tf.multiply(tf.gather(tf.transpose(op_tensor),feature_map),tf.diag(tf.ones_like(feature_map, dtype = tf.float32))), axis = 0)
 		tmp2 = 1e-3 * tf.reduce_mean(tf.square(X), axis = (1, 2 ,3))
 		tmp = tmp1 - tmp2
 		t_grad = tf.gradients(ys = tmp, xs = X)[0]
@@ -331,12 +332,13 @@ def _deepdream(graph, sess, op_tensor, X, feed_dict, layer, path_outdir, path_lo
 		with sess.as_default() as sess:
 			tile_size = sess.run(tf.shape(X), feed_dict = feed_dict)[1 : 3]
 
-			for k in range(0, tensor_shape[-1], n):
+			end = len(units)
+			for k in range(0, end, n):
 				c = n
-				if k + n >= tensor_shape[-1]:
-					c = tensor_shape[-1] - ((tensor_shape[-1] // n) * n)
+				if k + n >= end:
+					c = end - ((end // n) * n)
 				img = np.random.uniform(size = (c, tile_size[0], tile_size[1], 3)) + 117.0
-				feed_dict[feature_map] = np.arange(k, k + c)
+				feed_dict[feature_map] = units[k : k + c]
 
 				for octave in range(config["NUM_OCTAVE"]):
 					if octave > 0:
@@ -366,7 +368,8 @@ def _deepdream(graph, sess, op_tensor, X, feed_dict, layer, path_outdir, path_lo
 
 						lap_out = sess.run(laplacian_pyramid, feed_dict={lap_in:np.roll(np.roll(grad, -sx, 2), -sy, 1)})
 						img = img + lap_out
-				is_success = write_results(img, (layer, k), path_outdir, path_logdir, method = "deepdream")
+				is_success = write_results(img, (layer, units, k), path_outdir, path_logdir, method = "deepdream")
+				print("%s -> featuremap completed." % (", ".join(str(num) for num in units[k:k+c])))
 	return is_success
 
 
@@ -379,15 +382,17 @@ def deconv_visualization(graph_or_path, value_feed_dict, input_tensor = None, la
 	is_success = _get_visualization(graph_or_path, value_feed_dict, input_tensor = input_tensor, layers = layers, method = "deconv", 
 		path_logdir = path_logdir, path_outdir = path_outdir)
 	return is_success
-def deepdream_visualization(graph_or_path, value_feed_dict, input_tensor = None, layers = 'r', path_logdir = './Log', path_outdir = "./Output"):
+def deepdream_visualization(graph_or_path, value_feed_dict, layer, classes, input_tensor = None, path_logdir = './Log', path_outdir = "./Output"):
 	is_success = True
-	if isinstance(layers, list):
+	if isinstance(layer, list):
 		print("Please only give classification layer name for reconstruction.")
 		return False
-	elif layers in dict_layer.keys():
+	elif layer in dict_layer.keys():
 		print("Please only give classification layer name for reconstruction.")
 		return False
 	else:
-		is_success = _get_visualization(graph_or_path, value_feed_dict, input_tensor = input_tensor, layers = layers, method = "deepdream", 
+		global units
+		units = classes
+		is_success = _get_visualization(graph_or_path, value_feed_dict, input_tensor = input_tensor, layers = layer, method = "deepdream", 
 			path_logdir = path_logdir, path_outdir = path_outdir)
 	return is_success
