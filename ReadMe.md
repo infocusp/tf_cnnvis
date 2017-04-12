@@ -90,7 +90,7 @@ The function to generate the visualizations of the input image reconstructed fro
 #### Returns
 * is_success (boolean) – True if the function ran successfully. False otherwise
 
-**tf_cnnvis.deepdream_visualization(graph_or_path, value_feed_dict, layers, input_tensor=None, path_logdir='./Log', path_outdir='./Output')** 
+**tf_cnnvis.deepdream_visualization(graph_or_path, value_feed_dict, layer, classes, input_tensor=None, path_logdir='./Log', path_outdir='./Output')** 
 
 The function to generate the visualizations of the input image reconstructed from the feature maps of a given layer.
 #### Parameters
@@ -98,7 +98,8 @@ The function to generate the visualizations of the input image reconstructed fro
 * value_feed_dict (dict) – Values of placeholders to feed while evaluating the graph
     * dict : {placeholder1 : value1, ...}
 
-* layers (String) - name of a layer in TF graph
+* layer (String) - name of a layer in TF graph
+* classes (List) - list featuremap index for the class classification layer
 * input_tensor (tf.tensor object (Default = None)) – tf.tensor where we pass the input images to the TF graph 
 * path_outdir (String (Default = "./Output")) – [path-to-dir] to save results into disk as images
 * path_logdir (String (Default = "./Log")) – [path-to-log-dir] to make log file for TensorBoard visualization
