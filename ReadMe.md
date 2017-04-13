@@ -17,9 +17,10 @@ Figure 1: Original image and the reconstructed versions from maxpool layer 1,2 a
 
 
 
-2) CNN visualization based on [Deep dream]. Here's the relevant [blog post](https://research.googleblog.com/2015/06/inceptionism-going-deeper-into-neural.html) explaining the technique. (https://github.com/tensorflow/tensorflow/blob/master/tensorflow/examples/tutorials/deepdream/deepdream.ipynb). In essence, it attempts to construct an input image that maximizes the activation for a given output. We present some samples below:  
+2) CNN visualization based on [Deep dream](https://github.com/tensorflow/tensorflow/blob/master/tensorflow/examples/tutorials/deepdream/deepdream.ipynb). Here's the relevant [blog post](https://research.googleblog.com/2015/06/inceptionism-going-deeper-into-neural.html) explaining the technique. In essence, it attempts to construct an input image that maximizes the activation for a given output. We present some samples below:  
 
 <img src="https://bitbucket.org/repo/Lyk4Mq/images/302562334-deep_999.png" width="196" height="196"> <img src="https://bitbucket.org/repo/Lyk4Mq/images/586427523-deep_9.png" width="196" height="196"> <img src="https://bitbucket.org/repo/Lyk4Mq/images/3658923710-deep_24.png" width="196" height="196"> <img src="https://bitbucket.org/repo/Lyk4Mq/images/2708104439-deep_385.png" width="196" height="196">
+
 Carbonara, Ibex, Elephant, Ostrich
 
 
@@ -29,10 +30,12 @@ Cheese burger, Tennis ball, Fountain pen, Clock tower
 
 
 <img src="https://bitbucket.org/repo/Lyk4Mq/images/3869149957-deep_738.png" width="196" height="196"> <img src="https://bitbucket.org/repo/Lyk4Mq/images/4283505926-deep_915.png" width="196" height="196"> <img src="https://bitbucket.org/repo/Lyk4Mq/images/2629248471-deep_14.png" width="196" height="196"> <img src="https://bitbucket.org/repo/Lyk4Mq/images/3971745292-deep_22.png" width="196" height="196">
+
 Cauliflower, Baby Milk bottle, Sea lion, Dolphin
 
 
 ![tensorboard.png](https://bitbucket.org/repo/Lyk4Mq/images/2741459243-tensorboard.png)
+
 [View Full size](https://bitbucket.org/repo/Lyk4Mq/images/2005224096-tensorboard.png)
 
 ## Requirements:
