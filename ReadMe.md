@@ -1,6 +1,8 @@
 # tf_cnnvis
 
-tf_cnnvis is a CNN visualization library based on the paper [Visualizing and Understanding Convolutional Networks](https://www.cs.nyu.edu/~fergus/papers/zeilerECCV2014.pdf) by Matthew D. Zeiler and Rob Fergus. We use the [TensorFlow](https://www.tensorflow.org/) library to reconstruct the input images from different layers of the convolutional neural network. The generated images are displayed in [TensorBoard](https://www.tensorflow.org/get_started/summaries_and_tensorboard)
+tf_cnnvis is a CNN visualization library which you can to better understand your own CNNs. We use the [TensorFlow](https://www.tensorflow.org/) library at the backend and the generated images are displayed in [TensorBoard](https://www.tensorflow.org/get_started/summaries_and_tensorboard). We have implemented 2 CNN visualization techniques so far:
+
+1) Based on the paper [Visualizing and Understanding Convolutional Networks](https://www.cs.nyu.edu/~fergus/papers/zeilerECCV2014.pdf) by Matthew D. Zeiler and Rob Fergus. The goal here is to reconstruct the input image from the information contained in any given layers of the convolutional neural network. Here are a few examples
 
 <img src="https://bitbucket.org/repo/Lyk4Mq/images/4115906191-images.jpg" width="196" height="196"> <img src="https://bitbucket.org/repo/Lyk4Mq/images/780477117-reconstructed_1.png" width="196" height="196"> <img src="https://bitbucket.org/repo/Lyk4Mq/images/1721308804-reconstructed_2.png" width="196" height="196"> <img src="https://bitbucket.org/repo/Lyk4Mq/images/856735034-reconstructed_3.png" width="196" height="196">
 
@@ -12,12 +14,26 @@ tf_cnnvis is a CNN visualization library based on the paper [Visualizing and Und
 
 Figure 1: Original image and the reconstructed versions from maxpool layer 1,2 and 3 of Alexnet generated using tf_cnnvis. 
 
+
+
+
+2) CNN visualization based on [Deep dream]. Here's the relevant [blog post](https://research.googleblog.com/2015/06/inceptionism-going-deeper-into-neural.html) explaining the technique. (https://github.com/tensorflow/tensorflow/blob/master/tensorflow/examples/tutorials/deepdream/deepdream.ipynb). In essence, it attempts to construct an input image that maximizes the activation for a given output. We present some samples below:  
+
+<img src="https://bitbucket.org/repo/Lyk4Mq/images/302562334-deep_999.png" width="196" height="196"> <img src="https://bitbucket.org/repo/Lyk4Mq/images/586427523-deep_9.png" width="196" height="196"> <img src="https://bitbucket.org/repo/Lyk4Mq/images/3658923710-deep_24.png" width="196" height="196"> <img src="https://bitbucket.org/repo/Lyk4Mq/images/2708104439-deep_385.png" width="196" height="196">
+Carbonara, Ibex, Elephant, Ostrich
+
+
+<img src="https://bitbucket.org/repo/Lyk4Mq/images/3678905801-deep_993.png" width="196" height="196"> <img src="https://bitbucket.org/repo/Lyk4Mq/images/1049045916-deep_970.png" width="196" height="196"> <img src="https://bitbucket.org/repo/Lyk4Mq/images/2473296459-deep_934.png" width="196" height="196"> <img src="https://bitbucket.org/repo/Lyk4Mq/images/1596202689-deep_933.png" width="196" height="196">
+
+Cheese burger, Tennis ball, Fountain pen, Clock tower
+
+
+<img src="https://bitbucket.org/repo/Lyk4Mq/images/3869149957-deep_738.png" width="196" height="196"> <img src="https://bitbucket.org/repo/Lyk4Mq/images/4283505926-deep_915.png" width="196" height="196"> <img src="https://bitbucket.org/repo/Lyk4Mq/images/2629248471-deep_14.png" width="196" height="196"> <img src="https://bitbucket.org/repo/Lyk4Mq/images/3971745292-deep_22.png" width="196" height="196">
+Cauliflower, Baby Milk bottle, Sea lion, Dolphin
+
+
 ![tensorboard.png](https://bitbucket.org/repo/Lyk4Mq/images/2741459243-tensorboard.png)
-
 [View Full size](https://bitbucket.org/repo/Lyk4Mq/images/2005224096-tensorboard.png)
-
-
-
 
 ## Requirements:
 * Tensorflow (>= 1.0)
