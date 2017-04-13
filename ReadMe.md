@@ -4,18 +4,13 @@ tf_cnnvis is a CNN visualization library which you can to better understand your
 
 1) Based on the paper [Visualizing and Understanding Convolutional Networks](https://www.cs.nyu.edu/~fergus/papers/zeilerECCV2014.pdf) by Matthew D. Zeiler and Rob Fergus. The goal here is to reconstruct the input image from the information contained in any given layers of the convolutional neural network. Here are a few examples
 
-<img src="https://bitbucket.org/repo/Lyk4Mq/images/4115906191-images.jpg" width="196" height="196"> <img src="https://bitbucket.org/repo/Lyk4Mq/images/780477117-reconstructed_1.png" width="196" height="196"> <img src="https://bitbucket.org/repo/Lyk4Mq/images/1721308804-reconstructed_2.png" width="196" height="196"> <img src="https://bitbucket.org/repo/Lyk4Mq/images/856735034-reconstructed_3.png" width="196" height="196">
-
-
-<img src="https://bitbucket.org/repo/Lyk4Mq/images/1446219986-Lena.png" width="196" height="196"> <img src="https://bitbucket.org/repo/Lyk4Mq/images/3167061216-lena_reconstructed_1.png" width="196" height="196"> <img src="https://bitbucket.org/repo/Lyk4Mq/images/3614692134-lena_reconstructed_2.png" width="196" height="196"> <img src="https://bitbucket.org/repo/Lyk4Mq/images/124519901-lena_reconstructed_3.png" width="196" height="196">
-
-
-<img src="https://bitbucket.org/repo/Lyk4Mq/images/995747735-mancoffee.png" width="196" height="196"> <img src="https://bitbucket.org/repo/Lyk4Mq/images/755140547-man_reconstructed_1.png" width="196" height="196"> <img src="https://bitbucket.org/repo/Lyk4Mq/images/3249576627-man_reconstructed_2.png" width="196" height="196"> <img src="https://bitbucket.org/repo/Lyk4Mq/images/744562091-man_reconstructed_3.png" width="196" height="196">
+|   |   |   |   |
+| :-----------: | :-----------: | :-----------: | :-----------: |
+| <img src="https://bitbucket.org/repo/Lyk4Mq/images/4115906191-images.jpg" width="196" height="196"> | <img src="https://bitbucket.org/repo/Lyk4Mq/images/780477117-reconstructed_1.png" width="196" height="196"> | <img src="https://bitbucket.org/repo/Lyk4Mq/images/1721308804-reconstructed_2.png" width="196" height="196"> | <img src="https://bitbucket.org/repo/Lyk4Mq/images/856735034-reconstructed_3.png" width="196" height="196"> |
+| <img src="https://bitbucket.org/repo/Lyk4Mq/images/1446219986-Lena.png" width="196" height="196"> | <img src="https://bitbucket.org/repo/Lyk4Mq/images/3167061216-lena_reconstructed_1.png" width="196" height="196"> | <img src="https://bitbucket.org/repo/Lyk4Mq/images/3614692134-lena_reconstructed_2.png" width="196" height="196"> | <img src="https://bitbucket.org/repo/Lyk4Mq/images/124519901-lena_reconstructed_3.png" width="196" height="196"> |
+| <img src="https://bitbucket.org/repo/Lyk4Mq/images/995747735-mancoffee.png" width="196" height="196"> | <img src="https://bitbucket.org/repo/Lyk4Mq/images/755140547-man_reconstructed_1.png" width="196" height="196"> | <img src="https://bitbucket.org/repo/Lyk4Mq/images/3249576627-man_reconstructed_2.png" width="196" height="196"> | <img src="https://bitbucket.org/repo/Lyk4Mq/images/744562091-man_reconstructed_3.png" width="196" height="196"> |
 
 Figure 1: Original image and the reconstructed versions from maxpool layer 1,2 and 3 of Alexnet generated using tf_cnnvis. 
-
-
-
 
 2) CNN visualization based on [Deep dream](https://github.com/tensorflow/tensorflow/blob/master/tensorflow/examples/tutorials/deepdream/deepdream.ipynb). Here's the relevant [blog post](https://research.googleblog.com/2015/06/inceptionism-going-deeper-into-neural.html) explaining the technique. In essence, it attempts to construct an input image that maximizes the activation for a given output. We present some samples below:  
 
