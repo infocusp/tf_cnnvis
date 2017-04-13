@@ -66,7 +66,7 @@ def parse_tensors_dict(graph, layer_name, value_feed_dict):
 
 		# check for limit on number of feature maps
 		if not config["FORCE_COMPUTE"] and tensor_shape[-1] > config["MAX_FEATUREMAP"]:
-			print("Skipping. Too many featuremap. May cause memory errors.")
+			print("Skipping. Too many featuremaps. May cause memory errors.")
 			return None
 
 		# creating feed_dict and find input tensors
