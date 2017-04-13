@@ -19,19 +19,14 @@ Figure 1: Original image and the reconstructed versions from maxpool layer 1,2 a
 
 2) CNN visualization based on [Deep dream](https://github.com/tensorflow/tensorflow/blob/master/tensorflow/examples/tutorials/deepdream/deepdream.ipynb). Here's the relevant [blog post](https://research.googleblog.com/2015/06/inceptionism-going-deeper-into-neural.html) explaining the technique. In essence, it attempts to construct an input image that maximizes the activation for a given output. We present some samples below:  
 
-<img src="https://bitbucket.org/repo/Lyk4Mq/images/302562334-deep_999.png" width="196" height="196"> <img src="https://bitbucket.org/repo/Lyk4Mq/images/586427523-deep_9.png" width="196" height="196"> <img src="https://bitbucket.org/repo/Lyk4Mq/images/3658923710-deep_24.png" width="196" height="196"> <img src="https://bitbucket.org/repo/Lyk4Mq/images/2708104439-deep_385.png" width="196" height="196">
-
-Carbonara, Ibex, Elephant, Ostrich
-
-
-<img src="https://bitbucket.org/repo/Lyk4Mq/images/3678905801-deep_993.png" width="196" height="196"> <img src="https://bitbucket.org/repo/Lyk4Mq/images/1049045916-deep_970.png" width="196" height="196"> <img src="https://bitbucket.org/repo/Lyk4Mq/images/2473296459-deep_934.png" width="196" height="196"> <img src="https://bitbucket.org/repo/Lyk4Mq/images/1596202689-deep_933.png" width="196" height="196">
-
-Cheese burger, Tennis ball, Fountain pen, Clock tower
-
-
-<img src="https://bitbucket.org/repo/Lyk4Mq/images/3869149957-deep_738.png" width="196" height="196"> <img src="https://bitbucket.org/repo/Lyk4Mq/images/4283505926-deep_915.png" width="196" height="196"> <img src="https://bitbucket.org/repo/Lyk4Mq/images/2629248471-deep_14.png" width="196" height="196"> <img src="https://bitbucket.org/repo/Lyk4Mq/images/3971745292-deep_22.png" width="196" height="196">
-
-Cauliflower, Baby Milk bottle, Sea lion, Dolphin
+|   |   |   |   |
+| :-----------: | :-----------: | :-----------: | :-----------: |
+| <img src="https://bitbucket.org/repo/Lyk4Mq/images/302562334-deep_999.png" width="196" height="196"> | <img src="https://bitbucket.org/repo/Lyk4Mq/images/586427523-deep_9.png" width="196" height="196"> | <img src="https://bitbucket.org/repo/Lyk4Mq/images/3658923710-deep_24.png" width="196" height="196"> | <img src="https://bitbucket.org/repo/Lyk4Mq/images/2708104439-deep_385.png" width="196" height="196"> |
+| Carbonara | Ibex | Elephant | Ostrich |
+| <img src="https://bitbucket.org/repo/Lyk4Mq/images/3678905801-deep_993.png" width="196" height="196"> | <img src="https://bitbucket.org/repo/Lyk4Mq/images/1049045916-deep_970.png" width="196" height="196"> | <img src="https://bitbucket.org/repo/Lyk4Mq/images/2473296459-deep_934.png" width="196" height="196"> | <img src="https://bitbucket.org/repo/Lyk4Mq/images/1596202689-deep_933.png" width="196" height="196"> |
+| Cheese burger | Tennis ball | Fountain pen | Clock tower |
+| <img src="https://bitbucket.org/repo/Lyk4Mq/images/3869149957-deep_738.png" width="196" height="196"> | <img src="https://bitbucket.org/repo/Lyk4Mq/images/4283505926-deep_915.png" width="196" height="196"> | <img src="https://bitbucket.org/repo/Lyk4Mq/images/2629248471-deep_14.png" width="196" height="196"> | <img src="https://bitbucket.org/repo/Lyk4Mq/images/3971745292-deep_22.png" width="196" height="196"> |
+| Cauliflower | Baby Milk bottle | Sea lion | Dolphin |
 
 
 ![tensorboard.png](https://bitbucket.org/repo/Lyk4Mq/images/2741459243-tensorboard.png)
@@ -157,4 +152,5 @@ Convert 4-D numpy array into a grid of images
 
 #### Returns
 * (3-D numpy array) – A grid of input images
+
 
