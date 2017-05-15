@@ -101,7 +101,7 @@ def _write_activation(activations, layer, path_outdir, path_logdir):
 
 	for i in range(len(grid_activations)):
 		time_stamp = time.time()
-		time_stamp = datetime.datetime.fromtimestamp(time_stamp).strftime('%Y-%m-%d_%H:%M:%S')
+		time_stamp = datetime.datetime.fromtimestamp(time_stamp).strftime('%Y-%m-%d_%H-%M-%S')
 
 		grid_activation_path = os.path.join(path_out, "image_%s" % (time_stamp), "activations")
 		is_success = make_dir(grid_activation_path)
@@ -138,7 +138,7 @@ def _write_deconv(images, layer, path_outdir, path_logdir):
 
 	for i in range(len(grid_images)):
 		time_stamp = time.time()
-		time_stamp = datetime.datetime.fromtimestamp(time_stamp).strftime('%Y-%m-%d_%H:%M:%S')
+		time_stamp = datetime.datetime.fromtimestamp(time_stamp).strftime('%Y-%m-%d_%H-%M-%S')
 
 		grid_image_path = os.path.join(path_out, "image_%s" % (time_stamp))
 		is_success = make_dir(grid_image_path)
