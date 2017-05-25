@@ -36,10 +36,11 @@ Figure 1: Original image and the reconstructed versions from maxpool layer 1,2 a
 * wget
 * Pillow
 * six
+* scikit-image
 
 If you are using pip you can install these with
 
-```pip install tensorflow numpy scipy h5py wget Pillow six```
+```pip install tensorflow numpy scipy h5py wget Pillow six scikit-image```
 
 ## Setup script
 Clone the repository
