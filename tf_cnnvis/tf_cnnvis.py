@@ -89,6 +89,8 @@ def _get_visualization(graph_or_path, value_feed_dict, input_tensor, layers, pat
 	:type input_tensor: tf.tensor object (Default = None)
 
 	:param layers: 
+		Name of the layer to visualize or layer type.
+		Supported layer types :
 		'r' : Reconstruction from all the relu layers
 		'p' : Reconstruction from all the pooling layers
 		'c' : Reconstruction from all the convolutional layers
@@ -204,7 +206,7 @@ def _visualization_by_layer_type(graph, value_feed_dict, input_tensor, layer_typ
 
 def _visualization_by_layer_name(graph, value_feed_dict, input_tensor, layer_name, method, path_logdir, path_outdir):
 	"""
-	Generate and store filter visullization from the a layer which has name layer_name
+	Generate and store filter visullization from the layer which has the name layer_name
 
 	:param graph: 
 		TF graph 
@@ -220,10 +222,8 @@ def _visualization_by_layer_name(graph, value_feed_dict, input_tensor, layer_nam
 	:type input_tensor: tf.tensor object (Default = None)
 
 	:param layer_name: 
-		'r' : Reconstruction from all the relu layers
-		'p' : Reconstruction from all the pooling layers
-		'c' : Reconstruction from all the convolutional layers
-	:type layer_name: String (Default = 'r')
+		Name of the layer to visualize
+	:type layer_name: String
 
 	:param path_logdir: 
 		<path-to-log-dir> to make log file for TensorBoard visualization
