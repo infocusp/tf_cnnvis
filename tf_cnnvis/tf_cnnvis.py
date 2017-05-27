@@ -157,7 +157,7 @@ def _get_visualization(graph_or_path, value_feed_dict, input_tensor, layers, pat
 
 def _visualization_by_layer_type(graph, value_feed_dict, input_tensor, layer_type, method, path_logdir, path_outdir):
 	"""
-	Generate filter visullization from the layers which are of type layer_type
+	Generate filter visualization from the layers which are of type layer_type
 
 	:param graph: 
 		TF graph 
@@ -206,7 +206,7 @@ def _visualization_by_layer_type(graph, value_feed_dict, input_tensor, layer_typ
 
 def _visualization_by_layer_name(graph, value_feed_dict, input_tensor, layer_name, method, path_logdir, path_outdir):
 	"""
-	Generate and store filter visullization from the layer which has the name layer_name
+	Generate and store filter visualization from the layer which has the name layer_name
 
 	:param graph: 
 		TF graph 
