@@ -72,6 +72,7 @@ The function to generate the activation visualizations of the input image at the
 
 * input_tensor (tf.tensor object (Default = None)) – tf.tensor where we pass the input images to the TF graph
 * layers (list or String (Default = 'r')) – 
+    * layerName : Reconstruction from a layer specified by name 
     * ‘r’ : Reconstruction from all the relu layers 
     * ‘p’ : Reconstruction from all the pooling layers 
     * ‘c’ : Reconstruction from all the convolutional layers
@@ -91,6 +92,7 @@ The function to generate the visualizations of the input image reconstructed fro
 
 * input_tensor (tf.tensor object (Default = None)) – tf.tensor where we pass the input images to the TF graph
 * layers (list or String (Default = 'r')) – 
+    * layerName : Reconstruction from a layer specified by name 
     * ‘r’ : Reconstruction from all the relu layers 
     * ‘p’ : Reconstruction from all the pooling layers 
     * ‘c’ : Reconstruction from all the convolutional layers
