@@ -17,7 +17,7 @@ from .utils import *
 from .utils import config
 
 
-is_Registered = False # prevant duplicate gradient registration
+is_Registered = False # prevent duplicate gradient registration
 # map from keyword to layer type
 dict_layer = {'r' : "relu", 'p' : 'maxpool', 'c' : 'conv2d'}
 units = None
@@ -48,11 +48,11 @@ def _save_model(graph):
 	"""
 	Save the given TF graph at PATH = "./model/tmp-model"
 
-	:param graph: 
+	:param graph:
 		TF graph
 	:type graph:  tf.Graph object
 
-	:return: 
+	:return:
 		Path to saved graph
 	:rtype: String
 	"""
@@ -74,21 +74,21 @@ def _get_visualization(graph_or_path, value_feed_dict, input_tensor, layers, pat
 	"""
 	cnnvis main api function
 
-	:param graph_or_path: 
+	:param graph_or_path:
 		TF graph or
 		<Path-to-saved-graph> as String
 	:type graph_or_path: tf.Graph object or String
 
-	:param value_feed_dict: 
+	:param value_feed_dict:
 		Values of placeholders to feed while evaluting.
 		dict : {placeholder1 : value1, ...}.
 	:type value_feed_dict: dict or list
 
-	:param input_tensor: 
+	:param input_tensor:
 		tf.tensor object which is an input to TF graph
 	:type input_tensor: tf.tensor object (Default = None)
 
-	:param layers: 
+	:param layers:
 		Name of the layer to visualize or layer type.
 		Supported layer types :
 		'r' : Reconstruction from all the relu layers
@@ -96,15 +96,15 @@ def _get_visualization(graph_or_path, value_feed_dict, input_tensor, layers, pat
 		'c' : Reconstruction from all the convolutional layers
 	:type layers: list or String (Default = 'r')
 
-	:param path_logdir: 
+	:param path_logdir:
 		<path-to-log-dir> to make log file for TensorBoard visualization
 	:type path_logdir: String (Default = "./Log")
 
-	:param path_outdir: 
+	:param path_outdir:
 		<path-to-dir> to save results into disk as images
 	:type path_outdir: String (Default = "./Output")
 
-	:return: 
+	:return:
 		True if successful. False otherwise.
 	:rtype: boolean
 	"""
@@ -126,68 +126,64 @@ def _get_visualization(graph_or_path, value_feed_dict, input_tensor, layers, pat
 	with tf.Graph().as_default() as g:
 		if is_gradient_overwrite:
 			with g.gradient_override_map({'Relu': 'GuidedRelu', 'LRN': 'Customlrn'}): # overwrite gradients with custom gradients
-				with tf.Session() as sess:
-					new_saver = tf.train.import_meta_graph(PATH) # Import graph
-					new_saver.restore(sess, tf.train.latest_checkpoint(os.path.dirname(PATH)))
+				sess = _graph_import_function(PATH)
 		else:
-			with tf.Session() as sess:
-				new_saver = tf.train.import_meta_graph(PATH) # Import graph
-				new_saver.restore(sess, tf.train.latest_checkpoint(os.path.dirname(PATH)))
+			sess = _graph_import_function(PATH)
 
-		if isinstance(layers, list):
-			for layer in layers:
-				if layer != None and layer.lower() not in dict_layer.keys():
-					is_success = _visualization_by_layer_name(g, value_feed_dict, input_tensor, layer, method, path_logdir, path_outdir)
-				elif layer != None and layer.lower() in dict_layer.keys():
-					layer_type = dict_layer[layer.lower()]
-					is_success = _visualization_by_layer_type(g, value_feed_dict, input_tensor, layer_type, method, path_logdir, path_outdir)
-				else:
-					print("Skipping %s . %s is not valid layer name or layer type" % (layer, layer))
-		else:
-			if layers != None and layers.lower() not in dict_layer.keys():
-				is_success = _visualization_by_layer_name(g, value_feed_dict, input_tensor, layers, method, path_logdir, path_outdir)
-			elif layers != None and layers.lower() in dict_layer.keys():
-				layer_type = dict_layer[layers.lower()]
+		if not isinstance(layers, list):
+			layers =[layers]
+
+		for layer in layers:
+			if layer != None and layer.lower() not in dict_layer.keys():
+				is_success = _visualization_by_layer_name(g, value_feed_dict, input_tensor, layer, method, path_logdir, path_outdir)
+			elif layer != None and layer.lower() in dict_layer.keys():
+				layer_type = dict_layer[layer.lower()]
 				is_success = _visualization_by_layer_type(g, value_feed_dict, input_tensor, layer_type, method, path_logdir, path_outdir)
 			else:
-				is_success = False
-				print("%s is not a valid layer name or layer type." % (layers))
+				print("Skipping %s . %s is not valid layer name or layer type" % (layer, layer))
+
 	return is_success
 
+
+def _graph_import_function(PATH):
+	with tf.Session() as sess:
+		new_saver = tf.train.import_meta_graph(PATH) # Import graph
+		new_saver.restore(sess, tf.train.latest_checkpoint(os.path.dirname(PATH)))
+		return sess
 
 def _visualization_by_layer_type(graph, value_feed_dict, input_tensor, layer_type, method, path_logdir, path_outdir):
 	"""
 	Generate filter visualization from the layers which are of type layer_type
 
-	:param graph: 
-		TF graph 
+	:param graph:
+		TF graph
 	:type graph_or_path: tf.Graph object
 
-	:param value_feed_dict: 
+	:param value_feed_dict:
 		Values of placeholders to feed while evaluting.
 		dict : {placeholder1 : value1, ...}.
 	:type value_feed_dict: dict or list
 
-	:param input_tensor: 
+	:param input_tensor:
 		Where to reconstruct
 	:type input_tensor: tf.tensor object (Default = None)
 
-	:param layer_type: 
-		Type of the layer. Supported layer types : 
+	:param layer_type:
+		Type of the layer. Supported layer types :
 		'r' : Reconstruction from all the relu layers
 		'p' : Reconstruction from all the pooling layers
 		'c' : Reconstruction from all the convolutional layers
 	:type layer_type: String (Default = 'r')
 
-	:param path_logdir: 
+	:param path_logdir:
 		<path-to-log-dir> to make log file for TensorBoard visualization
 	:type path_logdir: String (Default = "./Log")
 
-	:param path_outdir: 
+	:param path_outdir:
 		<path-to-dir> to save results into disk as images
 	:type path_outdir: String (Default = "./Output")
 
-	:return: 
+	:return:
 		True if successful. False otherwise.
 	:rtype: boolean
 	"""
@@ -208,32 +204,32 @@ def _visualization_by_layer_name(graph, value_feed_dict, input_tensor, layer_nam
 	"""
 	Generate and store filter visualization from the layer which has the name layer_name
 
-	:param graph: 
-		TF graph 
+	:param graph:
+		TF graph
 	:type graph_or_path: tf.Graph object
 
-	:param value_feed_dict: 
+	:param value_feed_dict:
 		Values of placeholders to feed while evaluting.
 		dict : {placeholder1 : value1, ...}.
 	:type value_feed_dict: dict or list
 
-	:param input_tensor: 
+	:param input_tensor:
 		Where to reconstruct
 	:type input_tensor: tf.tensor object (Default = None)
 
-	:param layer_name: 
+	:param layer_name:
 		Name of the layer to visualize
 	:type layer_name: String
 
-	:param path_logdir: 
+	:param path_logdir:
 		<path-to-log-dir> to make log file for TensorBoard visualization
 	:type path_logdir: String (Default = "./Log")
 
-	:param path_outdir: 
+	:param path_outdir:
 		<path-to-dir> to save results into disk as images
 	:type path_outdir: String (Default = "./Output")
 
-	:return: 
+	:return:
 		True if successful. False otherwise.
 	:rtype: boolean
 	"""
@@ -296,7 +292,7 @@ def _deconvolution(graph, sess, op_tensor, X, feed_dict):
 		tensor_shape = op_tensor.get_shape().as_list()
 
 		with sess.as_default() as sess:
-			# creating placeholders to pass featuremaps and 
+			# creating placeholders to pass featuremaps and
 			# creating gradient ops
 			featuremap = [tf.placeholder(tf.int32) for i in range(config["N"])]
 			reconstruct = [tf.gradients(tf.transpose(tf.transpose(op_tensor)[featuremap[i]]), X)[0] for i in range(config["N"])]
@@ -375,11 +371,11 @@ def _deepdream(graph, sess, op_tensor, X, feed_dict, layer, path_outdir, path_lo
 
 # main api methods
 def activation_visualization(graph_or_path, value_feed_dict, input_tensor = None, layers = 'r', path_logdir = './Log', path_outdir = "./Output"):
-	is_success = _get_visualization(graph_or_path, value_feed_dict, input_tensor = input_tensor, layers = layers, method = "act", 
+	is_success = _get_visualization(graph_or_path, value_feed_dict, input_tensor = input_tensor, layers = layers, method = "act",
 		path_logdir = path_logdir, path_outdir = path_outdir)
 	return is_success
 def deconv_visualization(graph_or_path, value_feed_dict, input_tensor = None, layers = 'r', path_logdir = './Log', path_outdir = "./Output"):
-	is_success = _get_visualization(graph_or_path, value_feed_dict, input_tensor = input_tensor, layers = layers, method = "deconv", 
+	is_success = _get_visualization(graph_or_path, value_feed_dict, input_tensor = input_tensor, layers = layers, method = "deconv",
 		path_logdir = path_logdir, path_outdir = path_outdir)
 	return is_success
 def deepdream_visualization(graph_or_path, value_feed_dict, layer, classes, input_tensor = None, path_logdir = './Log', path_outdir = "./Output"):
@@ -393,6 +389,6 @@ def deepdream_visualization(graph_or_path, value_feed_dict, layer, classes, inpu
 	else:
 		global units
 		units = classes
-		is_success = _get_visualization(graph_or_path, value_feed_dict, input_tensor = input_tensor, layers = layer, method = "deepdream", 
+		is_success = _get_visualization(graph_or_path, value_feed_dict, input_tensor = input_tensor, layers = layer, method = "deepdream",
 			path_logdir = path_logdir, path_outdir = path_outdir)
 	return is_success
