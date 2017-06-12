@@ -3,7 +3,7 @@
 
 ## tf_cnnvis
 
-tf_cnnvis is a CNN visualization library which you can to better understand your own CNNs. We use the [TensorFlow](https://www.tensorflow.org/) library at the backend and the generated images are displayed in [TensorBoard](https://www.tensorflow.org/get_started/summaries_and_tensorboard). We have implemented 2 CNN visualization techniques so far:
+tf_cnnvis is a CNN visualization library which you can use to better understand your own CNNs. We use the [TensorFlow](https://www.tensorflow.org/) library at the backend and the generated images are displayed in [TensorBoard](https://www.tensorflow.org/get_started/summaries_and_tensorboard). We have implemented 2 CNN visualization techniques so far:
 
 1) Based on the paper [Visualizing and Understanding Convolutional Networks](https://www.cs.nyu.edu/~fergus/papers/zeilerECCV2014.pdf) by Matthew D. Zeiler and Rob Fergus. The goal here is to reconstruct the input image from the information contained in any given layers of the convolutional neural network. Here are a few examples
 
@@ -15,7 +15,7 @@ tf_cnnvis is a CNN visualization library which you can to better understand your
 
 Figure 1: Original image and the reconstructed versions from maxpool layer 1,2 and 3 of Alexnet generated using tf_cnnvis. 
 
-2) CNN visualization based on [Deep dream](https://github.com/tensorflow/tensorflow/blob/master/tensorflow/examples/tutorials/deepdream/deepdream.ipynb). Here's the relevant [blog post](https://research.googleblog.com/2015/06/inceptionism-going-deeper-into-neural.html) explaining the technique. In essence, it attempts to construct an input image that maximizes the activation for a given output. We present some samples below:  
+2) CNN visualization based on [Deep dream](https://github.com/tensorflow/tensorflow/blob/master/tensorflow/examples/tutorials/deepdream/deepdream.ipynb) by Google. Here's the relevant [blog post](https://research.googleblog.com/2015/06/inceptionism-going-deeper-into-neural.html) explaining the technique. In essence, it attempts to construct an input image that maximizes the activation for a given output. We present some samples below:  
 
 |   |   |   |   |
 | :-----------: | :-----------: | :-----------: | :-----------: |
@@ -26,7 +26,12 @@ Figure 1: Original image and the reconstructed versions from maxpool layer 1,2 a
 | <img src="https://bitbucket.org/repo/Lyk4Mq/images/3869149957-deep_738.png" width="196" height="196"> | <img src="https://bitbucket.org/repo/Lyk4Mq/images/4283505926-deep_915.png" width="196" height="196"> | <img src="https://bitbucket.org/repo/Lyk4Mq/images/2629248471-deep_14.png" width="196" height="196"> | <img src="https://bitbucket.org/repo/Lyk4Mq/images/3971745292-deep_22.png" width="196" height="196"> |
 | Cauliflower | Baby Milk bottle | Sea lion | Dolphin |
 
-#### Requirements:
+
+![tensorboard.png](https://bitbucket.org/repo/Lyk4Mq/images/2741459243-tensorboard.png)
+
+[View Full size](https://bitbucket.org/repo/Lyk4Mq/images/2005224096-tensorboard.png)
+
+## Requirements:
 * Tensorflow (>= 1.0)
 * numpy
 * scipy
@@ -34,12 +39,13 @@ Figure 1: Original image and the reconstructed versions from maxpool layer 1,2 a
 * wget
 * Pillow
 * six
+* scikit-image
 
 If you are using pip you can install these with
 
-```pip install tensorflow numpy scipy h5py wget Pillow six```
+```pip install tensorflow numpy scipy h5py wget Pillow six scikit-image```
 
-#### Setup script
+## Setup script
 Clone the repository
 
 ```
@@ -58,7 +64,7 @@ sudo python setup.py clean
 ```
 
 
-#### API
+## API
 **tf_cnnvis.activation_visualization(graph_or_path, value_feed_dict, input_tensor=None, layers='r', path_logdir='./Log', path_outdir='./Output')** 
 
 The function to generate the activation visualizations of the input image at the given layer.
@@ -69,6 +75,7 @@ The function to generate the activation visualizations of the input image at the
 
 * input_tensor (tf.tensor object (Default = None)) – tf.tensor where we pass the input images to the TF graph
 * layers (list or String (Default = 'r')) – 
+    * layerName : Reconstruction from a layer specified by name 
     * ‘r’ : Reconstruction from all the relu layers 
     * ‘p’ : Reconstruction from all the pooling layers 
     * ‘c’ : Reconstruction from all the convolutional layers
@@ -88,6 +95,7 @@ The function to generate the visualizations of the input image reconstructed fro
 
 * input_tensor (tf.tensor object (Default = None)) – tf.tensor where we pass the input images to the TF graph
 * layers (list or String (Default = 'r')) – 
+    * layerName : Reconstruction from a layer specified by name 
     * ‘r’ : Reconstruction from all the relu layers 
     * ‘p’ : Reconstruction from all the pooling layers 
     * ‘c’ : Reconstruction from all the convolutional layers
@@ -114,8 +122,8 @@ The function to generate the visualizations of the input image reconstructed fro
 #### Returns
 * is_success (boolean) – True if the function ran successfully. False otherwise
 
-#### To visualize in TensorBoard
-To start Tensorflow, run the following command in console
+## To visualize in TensorBoard
+To start Tensorflow, run the following command on the console
 
 ```
 #!bash
@@ -123,11 +131,11 @@ To start Tensorflow, run the following command in console
 tensorboard --logdir=./Log
 ```
 
-and under tensorboard homepage look under the *Images* tab
+and on the TensorBoard homepage look under the *Images* tab
 
-#### Additional helper functions
-#### tf_cnnvis.utils.image_normalization(image, ubound=255.0, epsilon=1e-07)
-Performs Min-Max image normalization. Transforms the pixel values to range [0, ubound]
+## Additional helper functions
+### tf_cnnvis.utils.image_normalization(image, ubound=255.0, epsilon=1e-07)
+Performs Min-Max image normalization. Transforms the pixel intensity values to range [0, ubound]
 #### Parameters
 * image (3-D numpy array) – A numpy array to normalize
 * ubound (float (Default = 255.0)) – upperbound for a image pixel value
@@ -135,15 +143,12 @@ Performs Min-Max image normalization. Transforms the pixel values to range [0, u
 #### Returns
 * norm_image (3-D numpy array) – The normalized image
 
-#### tf_cnnvis.utils.convert_into_grid(Xs, padding=1, ubound=255.0)
-Convert 4-D numpy array into a grid of images
+### tf_cnnvis.utils.convert_into_grid(Xs, padding=1, ubound=255.0)
+Convert 4-D numpy array into a grid of images for display
 #### Parameters
 * Xs (4-D numpy array (first axis contations an image)) – The 4D array of images to put onto grid
 * padding (int (Default = 1)) – Spacing between grid cells
 * ubound (float (Default = 255.0)) – upperbound for a image pixel value
 
-
 #### Returns
 * (3-D numpy array) – A grid of input images
-
-
