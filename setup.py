@@ -4,11 +4,11 @@ import sys
 import pkgutil
 
 # required pkgs
-dependencies = ['numpy', 'scipy', 'h5py', 'wget', 'Pillow', 'six']
+dependencies = ['numpy', 'scipy', 'h5py', 'wget', 'Pillow', 'six','scikit-image']
 
-try: 
+try:
 	from setuptools import setup
-except ImportError: 
+except ImportError:
 	from distutils.core import setup
 	print("Please install if not installed:", dependencies)
 from distutils.command.clean import clean
@@ -27,7 +27,7 @@ setup(
 	author = "Bhagyesh Vikani & Falak Shah",
 	author_email = "bhagyesh@infocusp.in & falak@infocusp.in",
 	description = ("tf_cnnvis is a CNN visualization library based on the paper 'Visualizing and Understanding Convolutional Networks' by Matthew D. Zeiler and Rob Fergus. We use the 'TensorFlow' library to reconstruct the input images from different layers of the convolutional neural network. The generated images are displayed in [TensorBoard](https://www.tensorflow.org/get_started/summaries_and_tensorboard)."),
-	license = "BSD",
+	license = "MIT",
 	keywords = "tensorflow tensorboard convolutional-neural-networks cnn visualization",
 	url = "https://github.com/InFoCusp/tf_cnnvis",
 	packages=['tf_cnnvis'],
@@ -36,7 +36,7 @@ setup(
 		"Development Status :: 3 - Alpha",
 		"Intended Audience :: Science/Research",
 		"Topic :: Utilities",
-		"License :: OSI Approved :: BSD License",
+		"License :: OSI Approved :: MIT License",
 		"Natural Language :: English",
 		"Operating System :: Unix",
 		"Programming Language :: Python",
@@ -52,6 +52,6 @@ setup(
 try:
 	import tensorflow
 	if int(tensorflow.__version__.split(".")[0]) < 1:
-		print("Please upgrade TensorFlow to 1.0.0")
+		print("Please upgrade to TensorFlow >= 1.0.0")
 except:
 	print("Please install TenSorflow with 'pip install tensorflow'")
