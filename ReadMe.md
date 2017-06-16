@@ -23,11 +23,6 @@ Figure 1: Original image and the reconstructed versions from maxpool layer 1,2 a
 | <img src="https://github.com/InFoCusp/ui_resources/blob/master/cnnvis_images/Cauliflower.png" width="196" height="196"> | <img src="https://github.com/InFoCusp/ui_resources/blob/master/cnnvis_images/Baby Milk bottle.png" width="196" height="196"> | <img src="https://github.com/InFoCusp/ui_resources/blob/master/cnnvis_images/Sea lion.png" width="196" height="196"> | <img src="https://github.com/InFoCusp/ui_resources/blob/master/cnnvis_images/Dolphin.png" width="196" height="196"> |
 | Cauliflower | Baby Milk bottle | Sea lion | Dolphin |
 
-
-![tensorboard.png](https://bitbucket.org/repo/Lyk4Mq/images/2741459243-tensorboard.png)
-
-[View Full size](https://bitbucket.org/repo/Lyk4Mq/images/2005224096-tensorboard.png)
-
 ## Requirements:
 * Tensorflow (>= 1.0)
 * numpy
