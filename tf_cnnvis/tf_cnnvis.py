@@ -22,6 +22,8 @@ is_Registered = False # prevent duplicate gradient registration
 dict_layer = {'r' : "relu", 'p' : 'maxpool', 'c' : 'conv2d'}
 units = None
 
+configProto = tf.ConfigProto(allow_soft_placement = True)
+
 # register custom gradients
 def _register_custom_gradients():
 	"""
@@ -60,7 +62,7 @@ def _save_model(graph):
 	make_dir(path = os.path.dirname(PATH))
 
 	with graph.as_default():
-		with tf.Session() as sess:
+		with tf.Session(config=configProto) as sess:
 			fake_var = tf.Variable([0.0], name = "fake_var")
 			sess.run(tf.global_variables_initializer())
 			saver = tf.train.Saver()
