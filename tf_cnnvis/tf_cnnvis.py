@@ -352,8 +352,8 @@ def _deepdream(graph, sess, op_tensor, X, feed_dict, layer, path_outdir, path_lo
 					for j in range(config["NUM_ITERATION"]):
 						sz = tile_size
 						h, w = img.shape[1:3]
-						sx = np.random.randint(sz[1], size=2)
-						sy = np.random.randint(sz[0], size=2)
+						sx = np.random.randint(sz[1], size=1)
+						sy = np.random.randint(sz[0], size=1)
 						img_shift = np.roll(np.roll(img, sx, 2), sy, 1)
 						grad = np.zeros_like(img)
 						for y in range(0, max(h-sz[0]//2,sz[0]), sz[0] // 2):
