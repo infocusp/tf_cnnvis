@@ -320,22 +320,24 @@ def _deepdream(graph, sess, op_tensor, X, feed_dict, layer, path_outdir, path_lo
 		tmp = tmp1 - tmp2
 		t_grad = tf.gradients(ys = tmp, xs = X)[0]
 
-		lap_in = tf.placeholder(np.float32, name='lap_in')
-		laplacian_pyramid = lap_normalize(lap_in, scale_n = config["NUM_LAPLACIAN_LEVEL"])
-
-		image_to_resize = tf.placeholder(np.float32, name='image_to_resize')
-		size_to_resize = tf.placeholder(np.int32, name='size_to_resize')
-		resize_image = tf.image.resize_bilinear(image_to_resize, size_to_resize)
-
 		with sess.as_default() as sess:
-			tile_size = sess.run(tf.shape(X), feed_dict = feed_dict)[1 : 3]
+			input_shape = sess.run(tf.shape(X), feed_dict = feed_dict)
+			tile_size = input_shape[1 : 3]
+			channels = input_shape[3]
+
+			lap_in = tf.placeholder(np.float32, name='lap_in')
+			laplacian_pyramid = lap_normalize(lap_in, channels, scale_n=config["NUM_LAPLACIAN_LEVEL"])
+
+			image_to_resize = tf.placeholder(np.float32, name='image_to_resize')
+			size_to_resize = tf.placeholder(np.int32, name='size_to_resize')
+			resize_image = tf.image.resize_bilinear(image_to_resize, size_to_resize)
 
 			end = len(units)
 			for k in range(0, end, n):
 				c = n
-				if k + n >= end:
+				if k + n > end:
 					c = end - ((end // n) * n)
-				img = np.random.uniform(size = (c, tile_size[0], tile_size[1], 3)) + 117.0
+				img = np.random.uniform(size = (c, tile_size[0], tile_size[1], channels)) + 117.0
 				feed_dict[feature_map] = units[k : k + c]
 
 				for octave in range(config["NUM_OCTAVE"]):
@@ -347,7 +349,7 @@ def _deepdream(graph, sess, op_tensor, X, feed_dict, layer, path_outdir, path_lo
 							min_img = im.min()
 							max_img = im.max()
 							temp = denoise_tv_bregman((im - min_img) / (max_img - min_img), weight = config["TV_DENOISE_WEIGHT"])
-							img[i] = temp * (max_img - min_img) + min_img
+							img[i] = (temp * (max_img - min_img) + min_img).reshape(img[i].shape)
 
 					for j in range(config["NUM_ITERATION"]):
 						sz = tile_size

@@ -15,6 +15,7 @@ import tensorflow as tf
 k = np.float32([1, 4, 6, 4, 1])
 k = np.outer(k, k)
 K5X5 = k[ : , : , None , None ] / k.sum() * np.eye(3, dtype = np.float32)
+channels = 1
 
 # optional hyperparameter settings
 config = {
@@ -177,9 +178,6 @@ def _write_deconv(images, layer, path_outdir, path_logdir):
 		finally:
 			file_writer.close() # close file writer
 	return is_success
-######################################
-# todo (Bhagyesh) test this please
-######################################
 def _write_deepdream(images, layer, path_outdir, path_logdir):
 	is_success = True
 
@@ -192,7 +190,10 @@ def _write_deepdream(images, layer, path_outdir, path_logdir):
 
 	for i in range(len(images)):
 		for j in range(images[i].shape[0]):
-			imsave(os.path.join(path_out, "image_%d.png" % (units[(i * images[i].shape[0]) + j + k])), images[i][j], format = "png")
+			img_save = images[i][j]
+			if img_save.shape[2] == 1:
+				img_save = np.squeeze(img_save, axis=2)
+			imsave(os.path.join(path_out, "image_%d.png" % (units[(i * images[i].shape[0]) + j + k])), img_save, format = "png")
 
 	# write into logfile
 	path_log = os.path.join(path_logdir, layer.lower().replace("/", "_"))
@@ -372,8 +373,10 @@ def _normalize_std(img):
 	with tf.name_scope('normalize'):
 		std = tf.sqrt(tf.reduce_mean(tf.square(img), axis = (1, 2, 3), keep_dims=True))
 		return img/tf.maximum(std, config["EPS"])
-def lap_normalize(img, scale_n):
+def lap_normalize(img, channels, scale_n):
 	'''Perform the Laplacian pyramid normalization.'''
+	K5X5 = k[ : , : , None , None ] / k.sum() * np.eye(channels, dtype = np.float32)
+	config["K5X5"] = K5X5
 	tlevels = _lap_split_n(img, scale_n)
 	tlevels = list(map(_normalize_std, tlevels))
 	out = _lap_merge(tlevels)
