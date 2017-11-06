@@ -1,6 +1,7 @@
 # Setup script for tf_cnnvis
 import os
 import sys
+import six
 import pkgutil
 
 # required pkgs
