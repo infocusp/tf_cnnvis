@@ -51,6 +51,7 @@ And run
 ```
 #!bash
 sudo pip install setuptools
+sudo pip install six
 sudo python setup.py install
 sudo python setup.py clean
 ```
