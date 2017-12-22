@@ -51,6 +51,7 @@ And run
 ```
 #!bash
 sudo pip install setuptools
+sudo pip install six
 sudo python setup.py install
 sudo python setup.py clean
 ```
@@ -65,7 +66,7 @@ The function to generate the activation visualizations of the input image at the
 * value_feed_dict (dict) – Values of placeholders to feed while evaluating the graph
     * dict : {placeholder1 : value1, ...}
 
-* input_tensor (tf.tensor object (Default = None)) – tf.tensor where we pass the input images to the TF graph
+* input_tensor (tf.tensor object (Default = None)) – tf.tensor (input tensor to the model - where images enter into the models) Note: This is not a standalone tensor/placeholder separate from the model
 * layers (list or String (Default = 'r')) – 
     * layerName : Reconstruction from a layer specified by name 
     * ‘r’ : Reconstruction from all the relu layers 
@@ -85,7 +86,7 @@ The function to generate the visualizations of the input image reconstructed fro
 * value_feed_dict (dict) – Values of placeholders to feed while evaluating the graph
     * dict : {placeholder1 : value1, ...}
 
-* input_tensor (tf.tensor object (Default = None)) – tf.tensor where we pass the input images to the TF graph
+* input_tensor (tf.tensor object (Default = None)) – tf.tensor (input tensor to the model - where images enter into the models) Note: This is not a standalone tensor/placeholder separate from the model
 * layers (list or String (Default = 'r')) – 
     * layerName : Reconstruction from a layer specified by name 
     * ‘r’ : Reconstruction from all the relu layers 
@@ -107,7 +108,7 @@ The function to generate the visualizations of the input image reconstructed fro
 
 * layer (String) - name of a layer in TF graph
 * classes (List) - list featuremap index for the class classification layer
-* input_tensor (tf.tensor object (Default = None)) – tf.tensor where we pass the input images to the TF graph 
+* input_tensor (tf.tensor object (Default = None)) – tf.tensor (input tensor to the model - where images enter into the models) Note: This is not a standalone tensor/placeholder separate from the model
 * path_outdir (String (Default = "./Output")) – [path-to-dir] to save results into disk as images
 * path_logdir (String (Default = "./Log")) – [path-to-log-dir] to make log file for TensorBoard visualization
 

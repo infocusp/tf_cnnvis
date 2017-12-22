@@ -1,6 +1,7 @@
 # Setup script for tf_cnnvis
 import os
 import sys
+import six
 import pkgutil
 
 # required pkgs
@@ -14,7 +15,10 @@ except ImportError:
 from distutils.command.clean import clean
 
 def read(fname):
-	return open(os.path.join(os.path.dirname(__file__), fname)).read()
+	if six.PY2:
+		return open(os.path.join(os.path.dirname(__file__), fname)).read()
+	else:
+		return open(os.path.join(os.path.dirname(__file__), fname), encoding='latin1').read()
 
 class CleanCommand(clean):
 	"""Custom clean command to tidy up the project root."""
