@@ -46,40 +46,49 @@ def _register_custom_gradients():
 
 
 # save given graph object as meta file
-def _save_model(graph):
+def _save_model(graph_or_sess):
 	"""
-	Save the given TF graph at PATH = "./model/tmp-model"
+	Save the given TF session at PATH = "./model/tmp-model"
 
-	:param graph:
-		TF graph
-	:type graph:  tf.Graph object
+	:param sess:
+		TF sess
+	:type sess:  tf.Session object
 
 	:return:
-		Path to saved graph
+		Path to saved session
 	:rtype: String
 	"""
+	if isinstance(graph_or_sess, tf.Graph):
+		with graph_or_sess.as_default():
+			sess = tf.Session(config=configProto)
+			fake_var = tf.Variable([0.0], name="fake_var")
+			sess.run(tf.global_variables_initializer())
+	else:
+		sess=graph_or_sess
+
+
 	PATH = os.path.join("model", "tmp-model")
 	make_dir(path = os.path.dirname(PATH))
+	saver = tf.train.Saver()
+	#i should deal with the case in which sess is closed.
+	saver.save(sess, PATH)
 
-	with graph.as_default():
-		with tf.Session(config=configProto) as sess:
-			fake_var = tf.Variable([0.0], name = "fake_var")
-			sess.run(tf.global_variables_initializer())
-			saver = tf.train.Saver()
-			saver.save(sess, PATH)
+	if isinstance(graph_or_sess, tf.Graph):
+		sess.close()
 
 	return PATH + ".meta"
 
 
 # All visualization of convolution happens here
-def _get_visualization(graph_or_path, value_feed_dict, input_tensor, layers, path_logdir, path_outdir, method = None):
+def _get_visualization(sess_graph_path, value_feed_dict, input_tensor, layers, path_logdir, path_outdir, method = None):
 	"""
 	cnnvis main api function
 
-	:param graph_or_path:
-		TF graph or
-		<Path-to-saved-graph> as String
-	:type graph_or_path: tf.Graph object or String
+	:param sess_graph_path:
+		TF session (open) or
+		<Path-to-saved-sessiion> as String or
+		TF graph (either FROZEN - training variables set to const, or INITIALIZED - init. values will be visualized)
+	:type sess_graph_path: tf.Sess object or String or tf.Graph object
 
 	:param value_feed_dict:
 		Values of placeholders to feed while evaluting.
@@ -112,12 +121,21 @@ def _get_visualization(graph_or_path, value_feed_dict, input_tensor, layers, pat
 	"""
 	is_success = True
 
-	if isinstance(graph_or_path, tf.Graph):
-		PATH = _save_model(graph_or_path)
-	elif isinstance(graph_or_path, string_types):
-		PATH = graph_or_path
+	# convert all inplicit and explicit sess input cases to a PATH
+	if isinstance(sess_graph_path, tf.Graph):
+		PATH = _save_model(sess_graph_path)
+	elif isinstance(sess_graph_path, tf.Session):
+		PATH = _save_model(sess_graph_path)
+	elif isinstance(sess_graph_path, string_types):
+		PATH = sess_graph_path
+	elif sess_graph_path is None:
+		# None input defaults to the default session if available, to the default graoh otherwise.
+		if isinstance(tf.get_default_session(), tf.Session):
+			PATH = _save_model(tf.get_default_session())
+		else:
+			PATH = _save_model(tf.get_default_graph())
 	else:
-		print("graph_or_path must be a object of graph or string.")
+		print("sess_graph_path must be an instance of tf.Session, tf. Graph, string or None.")
 		is_success = False
 		return is_success
 
@@ -125,33 +143,35 @@ def _get_visualization(graph_or_path, value_feed_dict, input_tensor, layers, pat
 	if is_gradient_overwrite:
 		_register_custom_gradients() # register custom gradients
 
+	# a new default Graph g and Session s which are loaded and used only in these nested with statements
 	with tf.Graph().as_default() as g:
-		if is_gradient_overwrite:
-			with g.gradient_override_map({'Relu': 'GuidedRelu', 'LRN': 'Customlrn'}): # overwrite gradients with custom gradients
-				sess = _graph_import_function(PATH)
-		else:
-			sess = _graph_import_function(PATH)
-
-		if not isinstance(layers, list):
-			layers =[layers]
-
-		for layer in layers:
-			if layer != None and layer.lower() not in dict_layer.keys():
-				is_success = _visualization_by_layer_name(g, value_feed_dict, input_tensor, layer, method, path_logdir, path_outdir)
-			elif layer != None and layer.lower() in dict_layer.keys():
-				layer_type = dict_layer[layer.lower()]
-				is_success = _visualization_by_layer_type(g, value_feed_dict, input_tensor, layer_type, method, path_logdir, path_outdir)
+		with tf.Session(graph=g).as_default() as s:
+			if is_gradient_overwrite:
+				with g.gradient_override_map({'Relu': 'GuidedRelu', 'LRN': 'Customlrn'}): # overwrite gradients with custom gradients
+					#works on s which is the default session, so it has an impact despite s is not used after this
+					s = _graph_import_function(PATH,s)
 			else:
-				print("Skipping %s . %s is not valid layer name or layer type" % (layer, layer))
+				s = _graph_import_function(PATH,s)
+
+			if not isinstance(layers, list):
+				layers =[layers]
+
+			for layer in layers:
+				if layer != None and layer.lower() not in dict_layer.keys():
+					is_success = _visualization_by_layer_name(g, value_feed_dict, input_tensor, layer, method, path_logdir, path_outdir)
+				elif layer != None and layer.lower() in dict_layer.keys():
+					layer_type = dict_layer[layer.lower()]
+					is_success = _visualization_by_layer_type(g, value_feed_dict, input_tensor, layer_type, method, path_logdir, path_outdir)
+				else:
+					print("Skipping %s . %s is not valid layer name or layer type" % (layer, layer))
 
 	return is_success
 
 
-def _graph_import_function(PATH):
-	with tf.Session() as sess:
-		new_saver = tf.train.import_meta_graph(PATH) # Import graph
-		new_saver.restore(sess, tf.train.latest_checkpoint(os.path.dirname(PATH)))
-		return sess
+def _graph_import_function(PATH, sess):
+	new_saver = tf.train.import_meta_graph(PATH) # Import graph
+	new_saver.restore(sess, tf.train.latest_checkpoint(os.path.dirname(PATH)))
+	return sess
 
 def _visualization_by_layer_type(graph, value_feed_dict, input_tensor, layer_type, method, path_logdir, path_outdir):
 	"""
@@ -159,7 +179,7 @@ def _visualization_by_layer_type(graph, value_feed_dict, input_tensor, layer_typ
 
 	:param graph:
 		TF graph
-	:type graph_or_path: tf.Graph object
+	:type graph: tf.Graph object
 
 	:param value_feed_dict:
 		Values of placeholders to feed while evaluting.
@@ -208,7 +228,7 @@ def _visualization_by_layer_name(graph, value_feed_dict, input_tensor, layer_nam
 
 	:param graph:
 		TF graph
-	:type graph_or_path: tf.Graph object
+	:type graph: tf.Graph object
 
 	:param value_feed_dict:
 		Values of placeholders to feed while evaluting.
@@ -238,35 +258,37 @@ def _visualization_by_layer_name(graph, value_feed_dict, input_tensor, layer_nam
 	start = -time.time()
 	is_success = True
 
+	sess = tf.get_default_session()
+	if not(graph is sess.graph):
+		print('Error, the graph input is not the graph of the current session!!')
 	# try:
 	parsed_tensors = parse_tensors_dict(graph, layer_name, value_feed_dict)
 	if parsed_tensors == None:
 		return is_success
+
 	op_tensor, x, X_in, feed_dict = parsed_tensors
 
 	is_deep_dream = True
-	with graph.as_default() as g:
+	#is_valid_sess = True
+	with graph.as_default():
 		# computing reconstruction
-		with tf.Session() as sess:
-			sess.run(tf.global_variables_initializer())
-			X = X_in
-			if input_tensor != None:
-				X = get_tensor(graph = g, name = input_tensor.name)
-			# original_images = sess.run(X, feed_dict = feed_dict)
+		X = X_in
+		if input_tensor != None:
+			X = get_tensor(graph = graph, name = input_tensor.name)
+		# original_images = sess.run(X, feed_dict = feed_dict)
 
-			results = None
-			if method == "act":
-				# compute activations
-				results = _activation(graph, sess, op_tensor, feed_dict)
-			elif method == "deconv":
-				# deconvolution
-				results = _deconvolution(graph, sess, op_tensor, X, feed_dict)
-			elif method == "deepdream":
-				# deepdream
-				is_success = _deepdream(graph, sess, op_tensor, X, feed_dict, layer_name, path_outdir, path_logdir)
-				is_deep_dream = False
+		results = None
+		if method == "act":
+			# compute activations
+			results = _activation(graph, sess, op_tensor, feed_dict)
+		elif method == "deconv":
+			# deconvolution
+			results = _deconvolution(graph, sess, op_tensor, X, feed_dict)
+		elif method == "deepdream":
+			# deepdream
+			is_success = _deepdream(graph, sess, op_tensor, X, feed_dict, layer_name, path_outdir, path_logdir)
+			is_deep_dream = False
 
-			sess = None
 	# except:
 	# 	is_success = False
 	# 	print("No Layer with layer name = %s" % (layer_name))
@@ -374,16 +396,16 @@ def _deepdream(graph, sess, op_tensor, X, feed_dict, layer, path_outdir, path_lo
 
 
 # main api methods
-def activation_visualization(graph_or_path, value_feed_dict, input_tensor = None, layers = 'r', path_logdir = './Log', path_outdir = "./Output"):
-	is_success = _get_visualization(graph_or_path, value_feed_dict, input_tensor = input_tensor, layers = layers, method = "act",
+def activation_visualization(sess_graph_path, value_feed_dict, input_tensor = None,  layers = 'r', path_logdir = './Log', path_outdir = "./Output"):
+	is_success = _get_visualization(sess_graph_path, value_feed_dict, input_tensor = input_tensor, layers = layers, method = "act",
 		path_logdir = path_logdir, path_outdir = path_outdir)
 	return is_success
-def deconv_visualization(graph_or_path, value_feed_dict, input_tensor = None, layers = 'r', path_logdir = './Log', path_outdir = "./Output"):
-	is_success = _get_visualization(graph_or_path, value_feed_dict, input_tensor = input_tensor, layers = layers, method = "deconv",
+def deconv_visualization(sess_graph_path, value_feed_dict, input_tensor = None,  layers = 'r', path_logdir = './Log', path_outdir = "./Output"):
+	is_success = _get_visualization(sess_graph_path, value_feed_dict, input_tensor = input_tensor, layers = layers, method = "deconv",
 		path_logdir = path_logdir, path_outdir = path_outdir)
 	return is_success
-def deepdream_visualization(graph_or_path, value_feed_dict, layer, classes, input_tensor = None, path_logdir = './Log', path_outdir = "./Output"):
-	is_success = True
+
+def deepdream_visualization(sess_graph_path, value_feed_dict, layer, classes, input_tensor = None, path_logdir = './Log', path_outdir = "./Output"):
 	if isinstance(layer, list):
 		print("Please only give classification layer name for reconstruction.")
 		return False
@@ -393,6 +415,7 @@ def deepdream_visualization(graph_or_path, value_feed_dict, layer, classes, inpu
 	else:
 		global units
 		units = classes
-		is_success = _get_visualization(graph_or_path, value_feed_dict, input_tensor = input_tensor, layers = layer, method = "deepdream",
+		is_success = _get_visualization(sess_graph_path, value_feed_dict, input_tensor = input_tensor, layers = layer, method = "deepdream",
 			path_logdir = path_logdir, path_outdir = path_outdir)
 	return is_success
+
