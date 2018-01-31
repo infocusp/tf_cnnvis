@@ -3,6 +3,8 @@ import os
 import sys
 import six
 import pkgutil
+import shutil
+import glob
 
 # required pkgs
 dependencies = ['numpy', 'scipy', 'h5py', 'wget', 'Pillow', 'six','scikit-image']
@@ -22,8 +24,22 @@ def read(fname):
 
 class CleanCommand(clean):
 	"""Custom clean command to tidy up the project root."""
+	def deleteFileOrDir(f):
+		try:
+			if os.path.isdir(f):
+				shutil.rmtree(f, ignore_errors=True)
+			else:
+				os.remove(f)
+		except Exception as e:
+			print(e)
+
 	def run(self):
-		os.system('rm -vrf ./build ./dist ./*.pyc ./*.tgz ./*.egg-info')
+		for p in './build ./dist ./*.pyc ./*.tgz ./*.egg-info'.split(' '):
+			if '*' in p:
+				for f in glob.glob(p):
+					CleanCommand.deleteFileOrDir(f)
+			else:
+				CleanCommand.deleteFileOrDir(p)
 
 setup(
 	name = "tf_cnnvis",
