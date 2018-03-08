@@ -56,6 +56,17 @@ sudo python setup.py install
 sudo python setup.py clean
 ```
 
+### Citation
+If you use this library in your work, please cite 
+```
+  @misc{tf_cnnvis,
+    author = {Bhagyesh Vikani, Falak Shah},
+    title = {CNN Visualization},
+    year = {2017},
+    howpublished = {\url{https://github.com/InFoCusp/tf_cnnvis/}},
+    note = {commit xxxxxxx}
+  }
+```
 
 ## API
 **tf_cnnvis.activation_visualization(graph_or_path, value_feed_dict, input_tensor=None, layers='r', path_logdir='./Log', path_outdir='./Output')** 
