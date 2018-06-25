@@ -40,7 +40,7 @@ def _register_custom_gradients():
         # register Relu gradients
         @ops.RegisterGradient("GuidedRelu")
         def _GuidedReluGrad(op, grad):
-            return tf.where(0. < grad, gen_nn_ops._relu_grad(grad, op.outputs[0]), tf.zeros_like(grad))
+            return tf.where(0. < grad, gen_nn_ops.relu_grad(grad, op.outputs[0]), tf.zeros_like(grad))
 
         is_Registered = True
 
