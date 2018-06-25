@@ -68,10 +68,10 @@ setup(
     }
 )
 
-# Check TF version as it requires > 1.0
+# Check TF version as it requires > 1.8
 try:
     import tensorflow
-    if int(tensorflow.__version__.split(".")[0]) < 1:
-        print("Please upgrade to TensorFlow >= 1.0.0")
+    if (int(tensorflow.__version__.split(".")[0]) + 0.1 * int(tensorflow.__version__.split(".")[1])) < 1.8:
+        print("Please upgrade to TensorFlow >= 1.8.0")
 except:
     print("Please install TenSorflow with 'pip install tensorflow'")
