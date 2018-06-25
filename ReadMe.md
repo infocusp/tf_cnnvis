@@ -24,7 +24,7 @@ Figure 1: Original image and the reconstructed versions from maxpool layer 1,2 a
 | Cauliflower | Baby Milk bottle | Sea lion | Dolphin |
 
 ## Requirements:
-* Tensorflow (>= 1.0)
+* Tensorflow (>= 1.8)
 * numpy
 * scipy
 * h5py
