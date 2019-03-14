@@ -64,7 +64,8 @@ If you use this library in your work, please cite
     title = {CNN Visualization},
     year = {2017},
     howpublished = {\url{https://github.com/InFoCusp/tf_cnnvis/}},
-    note = {commit xxxxxxx}
+    note = {commit xxxxxxx},
+    doi = {10.13140/RG.2.2.22741.27362}
   }
 ```
 
