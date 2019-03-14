@@ -1,7 +1,5 @@
 # tf_cnnvis
 
-[DOI: 10.13140/RG.2.2.22741.27362](https://doi.org/10.13140/RG.2.2.22741.27362)
-
 tf_cnnvis is a CNN visualization library which you can use to better understand your own CNNs. We use the [TensorFlow](https://www.tensorflow.org/) library at the backend and the generated images are displayed in [TensorBoard](https://www.tensorflow.org/get_started/summaries_and_tensorboard). We have implemented 2 CNN visualization techniques so far:
 
 1) Based on the paper [Visualizing and Understanding Convolutional Networks](https://www.cs.nyu.edu/~fergus/papers/zeilerECCV2014.pdf) by Matthew D. Zeiler and Rob Fergus. The goal here is to reconstruct the input image from the information contained in any given layers of the convolutional neural network. Here are a few examples
@@ -66,8 +64,7 @@ If you use this library in your work, please cite
     title = {CNN Visualization},
     year = {2017},
     howpublished = {\url{https://github.com/InFoCusp/tf_cnnvis/}},
-    note = {commit xxxxxxx},
-    doi = {10.13140/RG.2.2.22741.27362}
+    note = {commit xxxxxxx}
   }
 ```
 
