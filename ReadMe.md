@@ -1,6 +1,6 @@
 # tf_cnnvis
 
-[DOI][doi.org/10.13140/RG.2.2.22741.27362]
+[DOI: 10.13140/RG.2.2.22741.27362](https://doi.org/10.13140/RG.2.2.22741.27362)
 
 tf_cnnvis is a CNN visualization library which you can use to better understand your own CNNs. We use the [TensorFlow](https://www.tensorflow.org/) library at the backend and the generated images are displayed in [TensorBoard](https://www.tensorflow.org/get_started/summaries_and_tensorboard). We have implemented 2 CNN visualization techniques so far:
 
